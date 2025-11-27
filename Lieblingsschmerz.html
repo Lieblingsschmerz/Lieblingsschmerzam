@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>💌Mein Lieblingsschmerz💌</title>
+<style>
+  :root{
+    --rose:#ff4b6e; --rose-2:#ff8aa3; --champ:#fff6f0; --ink:#1f2a3a; --paper:#fffaf6;
+    --shadow:0 14px 40px rgba(0,0,0,.18);
+    --dot:#e8c8cf; --dot-active:#ff4b6e;
+    --gold1:#f9e6b6; --gold2:#f5c66a; --gold3:#f7d58f;
+    --halo1w: clamp(600px, 80vw, 1200px);
+    --halo1h: clamp(360px, 58vh, 860px);
+    --halo2w: clamp(480px, 65vw, 1000px);
+    --halo2h: clamp(320px, 50vh, 760px);
+    --champW: clamp(360px, 50vw, 820px);
+    --champH: clamp(260px, 38vh, 560px);
+
+    /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
+    --floor-gap: clamp(72px, 10vh, 180px);
+
+    /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
+    --print-zoom: 1;
+  }
+
+  html,body{height:100%;margin:0}
+  body{
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
+    color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    /* پدینگ پایینی را با safe-area + فاصلهٔ اضافه جمع می‌کنیم */
+    padding:28px;
+    padding-top:    max(28px, env(safe-area-inset-top));
+    padding-right:  max(28px, env(safe-area-inset-right));
+    padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
+    padding-left:   max(28px, env(safe-area-inset-left));
+
+    /* Romantic Rosé + Champagne layered background */
+    background:
+      radial-gradient(var(--halo1w) var(--halo1h) at 78% 6%,  rgba(255,241,247,.95), transparent 65%),
+      radial-gradient(var(--halo2w) var(--halo2h) at 8% 94%,   rgba(255,227,236,.88), transparent 66%),
+      radial-gradient(var(--champW) var(--champH) at 84% -4%,   rgba(249,230,182,.30), transparent 60%),
+      radial-gradient(calc(var(--champW)*0.8) calc(var(--champH)*0.8) at -6% 104%, rgba(245,198,106,.18), transparent 62%),
+      radial-gradient(calc(var(--champW)*1.1) calc(var(--champH)*0.9) at 50% -8%,  rgba(247,213,143,.12), transparent 65%),
+      #fffaf6;
+    background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
+    position:relative; overflow-x:hidden;
+  }
+
+  .stage{position:relative; width:min(760px,96vw);}
+
+  /* Umschlag */
+  .envelope{ position:relative; height:360px; perspective:1200px; display:flex;align-items:center;justify-content:center; }
+  .env-body{
+    position:absolute; inset:0; border-radius:22px; overflow:hidden;
+    background:linear-gradient(#fff, #fff5f7);
+    border:1px solid #ffe5eb; box-shadow:var(--shadow);
+  }
+  .env-body::after{
+    content:""; position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.015), rgba(0,0,0,.015) 1px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.01), rgba(0,0,0,.01) 1px, transparent 1px, transparent 2px);
+    pointer-events:none;
+  }
+
+  .env-label{
+    position:absolute; left:24px; right:24px; bottom:24px;
+    background:#fff; border:1px solid #ffcad4; border-radius:14px;
+    padding:10px 14px; text-align:center; font-weight:700;
+    box-shadow:0 10px 20px rgba(255,75,110,.08) inset, 0 8px 20px rgba(0,0,0,.06);
+  }
+
+  .flap{
+    position:absolute; top:0; left:0; right:0; height:58%;
+    transform-origin: top center; transform: rotateX(0deg);
+    transition: transform 900ms cubic-bezier(.2,.8,.1,1);
+    clip-path: polygon(0 0,100% 0,50% 100%);
+    background:linear-gradient(#ffb3c4,#ff8aa3);
+    border-top-left-radius:18px;border-top-right-radius:18px;
+    border:1px solid #ff9db3; border-bottom:none;
+    box-shadow: 0 14px 18px rgba(255,75,110,.16) inset, 0 -10px 14px rgba(255,255,255,.5) inset;
+  }
+  .flap::after{
+    content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-10%);
+    width:70%; height:2px; background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+    opacity:.6;
+  }
+
+  /* Wax seal + wiggle */
+  .seal{
+    position:absolute; left:50%; top:42%;
+    transform:translate(-50%,-50%); width:66px; height:66px; border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #ffd0d8 0%, #ff9db1 60%, #ff6a87 100%);
+    display:grid; place-items:center; color:#fff; font-weight:900; letter-spacing:.5px;
+    box-shadow: 0 4px 0 rgba(160,20,50,.25), 0 10px 24px rgba(255,75,110,.25);
+    text-shadow:0 1px 0 rgba(0,0,0,.25);
+  }
+  .seal::after{
+    content:""; position:absolute; inset:-6px; border-radius:50%;
+    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.5) 0, transparent 45%);
+    filter: blur(2px); pointer-events:none;
+  }
+  @keyframes wiggle{
+    0%  { transform:translate(-50%,-50%) rotate(0deg); }
+    25% { transform:translate(-50%,-50%) rotate(-6deg); }
+    50% { transform:translate(-50%,-50%) rotate(6deg); }
+    75% { transform:translate(-50%,-50%) rotate(-3deg); }
+    100%{ transform:translate(-50%,-50%) rotate(0deg); }
+  }
+  .seal.wiggle{ animation: wiggle .35s ease; }
+
+  /* Öffnen button + ripple */
+  .open-wrap{ position:absolute; bottom:-26px; left:0; right:0; display:flex; justify-content:center; }
+  .open-btn{
+    background:linear-gradient(180deg,#ff6a87,#ff4b6e);
+    color:#fff; font-weight:800; border:0; border-radius:16px; padding:13px 22px; cursor:pointer;
+    box-shadow:0 14px 24px rgba(255,75,110,.35), 0 2px 0 rgba(160,20,50,.25) inset;
+    transition: transform .12s ease, box-shadow .12s ease;
+    position:relative; overflow:hidden;
+  }
+  .open-btn:active{ transform:translateY(1px) }
+  .open-btn::after{
+    content:""; position:absolute; left:-40%; top:-200%;
+    width:80%; height:400%; transform:rotate(25deg);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+    animation:glint 4.8s linear infinite;
+  }
+  @keyframes glint{ 0%{left:-40%} 55%{left:140%} 100%{left:140%} }
+
+  .ripple{
+    position:absolute; border-radius:9999px; pointer-events:none;
+    transform:translate(-50%,-50%);
+    background: radial-gradient(circle,
+      rgba(249,230,182,.45) 0%,
+      rgba(245,198,106,.30) 40%,
+      rgba(247,213,143,.15) 60%,
+      transparent 70%);
+    animation: rippleOut .6s ease-out forwards;
+  }
+  @keyframes rippleOut{
+    from{ width:0;height:0; opacity:.35 }
+    to  { width:220px;height:220px; opacity:0 }
+  }
+
+  .opened .flap{ transform: rotateX(-185deg); }
+  .opened .open-wrap{display:none}
+
+  /* Origami short line */
+  .origami-line{
+    position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8;
+  }
+  .origami-line svg path{ stroke: rgba(247,213,143,.85); }
+
+  /* Post stamp cancellation (gold waves) */
+  .stamp-cancel{
+    position:absolute; top:24px; left:62px; width:160px; height:70px; transform: rotate(-16deg);
+    pointer-events:none; opacity:.66;
+  }
+  .stamp-cancel svg path{ stroke: rgba(245,198,106,.55); }
+
+  /* Card */
+  .card{
+    position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
+    border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
+
+    /* فاصلهٔ اضافه تا کف صفحه (برای دیده‌شدن کامل قاب طلایی پایین) */
+    margin-bottom: calc(var(--floor-gap) * .6);
+  }
+  .card.show{display:block; animation:pop .7s ease}
+  @keyframes pop{from{transform:translateY(10px); opacity:0}to{transform:translateY(0); opacity:1}}
+
+  .card::before{
+    content:""; position:absolute; inset:-1px; border-radius:24px; padding:1.5px;
+    background: linear-gradient(90deg, var(--gold1), var(--gold2), var(--gold3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events:none; opacity:.9;
+  }
+  .card::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.012), rgba(0,0,0,.012) 1px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.008), rgba(0,0,0,.008) 1px, transparent 1px, transparent 2px);
+    opacity:.45;
+  }
+
+  /* Header + symmetric ribbon chip */
+  .card-header{
+    padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
+    display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
+    overflow: visible;
+  }
+  .chip{display:inline-block; color:#9c1c38; font-weight:800; font-size:12px}
+  .chip.ribbon{
+    position:relative; background:#fff1f7;
+    padding:8px 18px; border-radius:12px;
+    border:1px solid #ffd6e3; box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
+  }
+  .chip.ribbon::before,
+  .chip.ribbon::after{
+    content:""; position:absolute; top:50%; width:16px; height:16px;
+    background:#ffeaf2; border:1px solid #ffd6e3;
+    box-shadow:0 0 0 1px rgba(255,255,255,.7) inset;
+    transform:translateY(-50%) rotate(45deg);
+  }
+  .chip.ribbon::before{ left:-10px; }
+  .chip.ribbon::after{  right:-10px; }
+
+  .card-body{ padding:24px; line-height:1.95; position:relative }
+  .card-body::after{
+    content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
+    box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
+  }
+
+  /* Subtle golden corner florals */
+  .gilded-corner{
+    position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
+  }
+  .gilded-corner svg path,
+  .gilded-corner svg circle{
+    stroke: rgba(247,213,143,.8);
+    fill: rgba(247,213,143,.18);
+  }
+  .gilded-corner.tl{ top:10px; left:10px; transform: rotate(0deg); }
+  .gilded-corner.br{ bottom:10px; right:10px; transform: rotate(180deg); }
+
+  h1{font-size:26px; margin:0 0 6px}
+  .subline{ font-size:14px; opacity:.85; margin:-2px 0 10px; font-style:italic; direction: rtl; }
+
+  .gold{
+    background: linear-gradient(90deg,var(--gold1),var(--gold2),var(--gold3));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .gold.glint{ background-size:200% auto; animation:goldglint 9.2s linear infinite; }
+  @keyframes goldglint{ 0%{background-position:-60% 0} 45%{background-position:160% 0} 100%{background-position:160% 0} }
+
+  .gold.neon{
+    -webkit-text-stroke: 1px rgba(247,213,143,.85);
+    text-shadow:0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25);
+    filter: drop-shadow(0 0 6px rgba(247,213,143,.22));
+  }
+  .gold.neon.breathe{ animation: neon-outline-breathe 2.8s ease-in-out infinite; }
+
+  #letter .neon-word{
+    color: inherit;
+    -webkit-text-stroke: .8px rgba(247,213,143,.9);
+    text-shadow: 0 0 2px rgba(247,213,143,.55), 0 0 6px rgba(245,198,106,.35), 0 0 10px rgba(249,230,182,.3);
+    filter: drop-shadow(0 0 4px rgba(247,213,143,.22));
+    border-radius: 2px;
+  }
+  #letter .neon-word.breathe{ animation: neon-outline-breathe 2.4s ease-in-out infinite; }
+  @keyframes neon-outline-breathe{
+    0%,100%{ text-shadow: 0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25);
+             filter: drop-shadow(0 0 6px rgba(247,213,143,.22)); }
+    50%   { text-shadow: 0 0 4px rgba(247,213,143,.60), 0 0 10px rgba(245,198,106,.42), 0 0 20px rgba(249,230,182,.35);
+             filter: drop-shadow(0 0 8px rgba(247,213,143,.30)); }
+  }
+
+  .muted{opacity:.82; font-size:14px}
+  .letter{white-space:pre-wrap; font-size:17px; margin-top:10px}
+  .fade{animation:fade .35s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:translateY(0)}}
+
+  /* Divider */
+  .divider{
+    --gap: 14px;
+    --thick: 1.5px;
+    position:relative; height:22px; margin:14px 0;
+  }
+  .divider::before{
+    content:""; position:absolute; left:12px; right:12px; top:50%;
+    height:var(--thick); transform:translateY(-50%);
+    background:
+      linear-gradient(90deg, var(--gold1), var(--gold2)) left  / calc(50% - var(--gap)) var(--thick) no-repeat,
+      linear-gradient(90deg, var(--gold2), var(--gold1)) right / calc(50% - var(--gap)) var(--thick) no-repeat;
+  }
+  .divider::after{
+    content:""; position:absolute; left:50%; top:50%;
+    width:18px; height:18px; transform:translate(-50%,-50%) rotate(45deg);
+    background:rgba(255,255,255,.9);
+    border:2px solid rgba(247,213,143,.8);
+    box-shadow: 0 0 16px rgba(247,213,143,.25);
+  }
+
+  /* Quotes */
+  .quotes{ margin-top:18px; padding-top:10px; border-top:none; }
+  .q-title{font-weight:800; margin:0 0 8px}
+  .q-box{
+    font-size:20px; line-height:1.8; text-align:center; padding:12px 14px;
+    border:1px dashed rgba(249,230,182,.65); border-radius:16px; background:rgba(255,255,255,.66);
+    position:relative; overflow:visible;
+  }
+  #quoteText{ position:relative; }
+  .q-author{ text-align:center; opacity:.7; margin-top:6px; }
+
+  .dots{ display:flex; gap:8px; justify-content:center; align-items:center; margin:10px 0 6px; flex-wrap:wrap; }
+  .dot{ width:10px; height:10px; border-radius:50%; border:2px solid var(--dot); background:transparent; cursor:pointer; transition: transform .12s ease; }
+  .dot.active{ background:var(--dot-active); border-color:var(--dot-active); transform:scale(1.05); }
+
+  .q-actions{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+
+  /* progress */
+  .q-progress{ height:2px; background:rgba(249,230,182,.35); border-radius:999px; overflow:hidden; margin:6px 12px 0; }
+  .q-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold2)); }
+  .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
+  @keyframes qbar{ from{width:0%} to{width:100%} }
+
+  .pulse-heart{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.6);
+    font-size:22px; pointer-events:none; animation:pulseOut .4s ease forwards;
+  }
+  @keyframes pulseOut{ to{ transform:translate(-50%,-50%) scale(1.6); opacity:0 } }
+
+  .actions{
+    display:flex; gap:10px; align-items:center; justify-content:center;
+    flex-wrap:wrap; margin:12px 0 6px;
+  }
+  .btn{ border:0; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:800; background:#f6f6f6;
+        transition: box-shadow .15s ease, transform .08s ease; }
+  .btn:hover{ box-shadow:0 10px 22px rgba(255,75,110,.28), 0 0 0 1px rgba(255,255,255,.6) inset; }
+  .btn:active{ transform: translateY(1px); }
+  .btn.primary{ background: var(--rose); color:#fff}
+
+  .vol-wrap{ display:flex; align-items:center; gap:8px; }
+  .vol-label{ font-size:12px; opacity:.75 }
+  input[type="range"]{
+    -webkit-appearance:none; appearance:none; height:8px; width:140px; border-radius:999px;
+    background: linear-gradient(90deg, #ffe2ea, #ffd0db);
+    outline:none; border:1px solid #ffd6df;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+    background:#fff; border:2px solid var(--rose);
+    box-shadow:0 2px 6px rgba(255,75,110,.35);
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; background:#fff; border:2px solid var(--rose);
+    box-shadow:0 2px 6px rgba(255,75,110,.35);
+  }
+
+  .music-visual{
+    width:100%; display:flex; align-items:center; justify-content:center;
+    gap:8px; margin-top:6px; opacity:.9; flex-wrap:wrap;
+  }
+  .music-visual .heart{ font-size:18px; width:22px; text-align:center; transform-origin:center; opacity:.75; }
+  .music-visual.on .heart{ animation:mbeat 1.1s ease-in-out infinite; }
+  .music-visual.on .heart:nth-child(3n+1){ animation-delay:0s }
+  .music-visual.on .heart:nth-child(3n+2){ animation-delay:.15s }
+  .music-visual.on .heart:nth-child(3n){ animation-delay:.3s }
+  @keyframes mbeat{ 0%,100%{transform:scale(1)} 25%{transform:scale(1.25)} 50%{transform:scale(1.05)} 75%{transform:scale(1.2)} }
+
+  .ps-toggle{ margin-top:10px; background:#fff1f7; }
+  .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
+  .ps.show{ display:block; }
+
+  /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
+  @media print{
+    @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
+
+    html,body{
+      background:#fff !important; height:auto !important; overflow:visible !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
+    }
+
+    /* فقط کارت در چیدمان بماند */
+    body > *{ visibility:hidden !important; }
+    .stage{ display:block !important; visibility:visible !important; }
+    .stage > :not(.card){ display:none !important; } /* پاک‌کردن envelope و ... از چیدمان */
+    .card, .card *{ visibility:visible !important; }
+
+    .card{
+      display:block !important; position:static !important;
+
+      /* عرض قبل از زوم؛ تا بعد از zoom دقیقاً به ناحیهٔ قابل‌چاپ بخورد */
+      width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
+
+      margin:0 !important;
+      box-shadow:none !important; border:1px solid #eeeeee !important;
+      break-inside: avoid !important; page-break-inside: avoid !important;
+
+      /* زوم واقعی (Chrome/Edge/Safari) */
+      zoom: var(--print-zoom, 1) !important;
+      transform: none !important;
+      transform-origin: top left !important;
+    }
+
+    .card::before, .card::after,
+    .gilded-corner, .stamp-cancel, .origami-line,
+    .dots, .q-actions, .actions, .music-visual{ display:none !important; }
+
+    .card-body{ padding:14mm 16mm !important; box-shadow:none !important; }
+    .letter{ font-size:18px !important; line-height:1.9 !important; }
+    .print-sign{ display:block !important; margin-top:12mm; text-align:right; font-family:cursive; opacity:.9; }
+  }
+
+  .print-sign{ display:none; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- Umschlag -->
+    <section class="envelope" id="envelope" aria-label="Liebes-Umschlag">
+      <div class="env-body"></div>
+      <div class="flap" id="flap"></div>
+      <div class="seal" id="seal" aria-hidden="true">R</div>
+      <div class="stamp" aria-hidden="true">💘</div>
+
+      <!-- post cancellation (gold) -->
+      <div class="stamp-cancel" aria-hidden="true">
+        <svg viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 10 C45 0, 85 20, 130 10 S200 20, 220 10" stroke-width="2" fill="none"/>
+          <path d="M0 25 C45 15, 85 35, 130 25 S200 35, 220 25" stroke-width="2" fill="none"/>
+          <path d="M0 40 C45 30, 85 50, 130 40 S200 50, 220 40" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- short origami line -->
+      <div class="origami-line" aria-hidden="true">
+        <svg viewBox="0 0 120 22" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M6 16 L34 6 L62 16 L90 6 L114 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="env-label">Öffne diesen<b id="toName"> Brief </b> Immer dann, wenn du lächelst weil er gehört zu deinem Lächeln. 🩵</div>
+      <div class="open-wrap">
+        <button class="open-btn" id="openBtn" aria-label="Öffnen">Öffnen✨</button>
+      </div>
+    </section>
+
+    <!-- Karte -->
+    <article class="card" id="card">
+      <div class="card-header">
+        <span class="chip ribbon">November, 2025</span>
+      </div>
+
+      <div class="card-body">
+        <!-- subtle golden florals -->
+        <div class="gilded-corner tl" aria-hidden="true">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="6"/>
+            <circle cx="38" cy="18" r="5"/>
+            <circle cx="18" cy="38" r="5"/>
+            <path d="M12 70 Q30 52 50 60 T88 42" stroke-width="2" fill="none"/>
+            <path d="M20 78 Q36 62 58 66" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+        <div class="gilded-corner br" aria-hidden="true">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="6"/>
+            <circle cx="38" cy="18" r="5"/>
+            <circle cx="18" cy="38" r="5"/>
+            <path d="M12 70 Q30 52 50 60 T88 42" stroke-width="2" fill="none"/>
+            <path d="M20 78 Q36 62 58 66" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+
+        <h1>Baraye <span id="name" class="gold glint neon breathe">Royam</span> ✨</h1>
+        <div class="subline">برای رویا،</div>
+
+        <div class="muted">Mein Lieblingsschmerz,</div>
+        <div class="letter" id="letter">❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</div>
+
+        <!-- Divider #1 -->
+        <div class="divider" aria-hidden="true"></div>
+
+        <button class="btn ps-toggle" id="psToggle" aria-expanded="false">Noch eins:</button>
+        <div class="ps" id="psText">Manchmal reichen Wörter nicht aber dieser Brief versucht es trotzdem. 💗</div>
+
+        <!-- Divider #2 -->
+        <div class="divider" aria-hidden="true"></div>
+
+        <section class="quotes" id="quotes" role="region" aria-label="Zitat-Karussell">
+          <h3 class="q-title">Die Worte meines Herzens nur für meine Liebste. 💞🌹</h3>
+          <div id="quoteText" class="q-box fade">…</div>
+          <div id="quoteAuthor" class="q-author"></div>
+
+          <div id="qProgress" class="q-progress" aria-hidden="true"><div class="bar"></div></div>
+
+          <div id="dots" class="dots" aria-label="Position"></div>
+          <div class="q-actions">
+            <button class="btn" id="prevBtn" aria-label="Vorheriges Zitat">Zurückblättern 🌙</button>
+            <button class="btn" id="nextBtn" aria-label="Nächstes Zitat">Weiterblättern 🌟</button>
+            <button class="btn" id="randBtn" aria-label="Zufälliges Zitat">Überrasch mich ✨</button>
+            <button class="btn" id="autoBtn" aria-pressed="false" aria-label="Auto-Play umschalten">Herzschlag: Aus 🤍</button>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button class="btn primary" id="replay">Nochmal schmelzen 💌</button>
+          <button class="btn" id="pdf">Als Andenken speichern 💝</button>
+          <button class="btn" id="musicBtn">Melodie 🎵</button>
+          <div class="vol-wrap" aria-label="Lautstärke">
+            <span class="vol-label">🔊</span>
+            <input id="volume" type="range" min="0" max="100" value="70" step="1" />
+          </div>
+        </div>
+
+        <div class="music-visual" id="musicViz" aria-hidden="true">
+          <span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span>
+          <span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span>
+          <span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span><span class="heart">💗</span>
+        </div>
+
+        <div class="print-sign">Mit Liebe, Kiwi</div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Musik -->
+  <audio id="bgm" src="./bg.mp3" preload="auto" playsinline type="audio/mpeg" loop></audio>
+  <audio id="fxOpen" preload="none" src="paper.mp3"></audio>
+
+<script>
+  // ===== Inhalte =====
+  const letterText  = `Roya ❤️
+Midooni ghashangiye to chie? 
+Inke hatta vaghti hichi nemigi, baz ham harf mizani…
+Ba negahet 🦋، ba sokootet 🤍، ba hamoon halate sooratet 
+vaghti labkhande nesfe mizani 😊.
+
+To az oon adamhaayi hasti ke yejoor khaas to ye delam mimooni…
+Joori ke hatta bekham ham nemitoonam faramooshet konam 🫶.
+
+Faghat khastam ino begam:
+Az vaghti to hasti,
+Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
+
+  const NEON_WORDS = ["Roya","to","donyam"];
+
+  // Elements
+  const env = document.getElementById("envelope");
+  const openBtn = document.getElementById("openBtn");
+  const card = document.getElementById("card");
+  const letterEl = document.getElementById("letter");
+  const nameEl = document.getElementById("name");
+  const musicBtn = document.getElementById("musicBtn");
+  const volumeEl = document.getElementById("volume");
+  const bgm = document.getElementById("bgm");
+  const fxOpen = document.getElementById("fxOpen");
+  const musicViz = document.getElementById("musicViz");
+  const psToggle = document.getElementById("psToggle");
+  const psText = document.getElementById("psText");
+  const sealEl = document.getElementById("seal");
+
+  const quoteText = document.getElementById("quoteText");
+  const quoteAuthor = document.getElementById("quoteAuthor");
+  const dotsWrap = document.getElementById("dots");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const randBtn = document.getElementById("randBtn");
+  const autoBtn = document.getElementById("autoBtn");
+  const replayBtn = document.getElementById("replay");
+  const pdfBtn = document.getElementById("pdf");
+  const quotesSection = document.getElementById("quotes");
+  const qProgress = document.getElementById("qProgress");
+
+  // Typing + Neon highlight
+  function typeWriter(text, el, i=0){
+    if(i === 0){ el.textContent = ""; }
+    if(i < text.length){
+      el.textContent = text.slice(0, i+1);
+      setTimeout(()=>typeWriter(text, el, i+1), 24);
+    }else{
+      highlightLetter();
+    }
+  }
+  function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function buildRegex(words){
+    if(!words || !words.length) return null;
+    const pattern = words.map(escapeRegExp).join('|');
+    return new RegExp(`(${pattern})`,'giu');
+  }
+  function isLetterOrDigit(ch){ return ch && /\p{L}|\p{N}/u.test(ch); }
+
+  function highlightNodeText(node, re){
+    const text = node.nodeValue;
+    if(!text || !re.test(text)) return;
+    const frag = document.createDocumentFragment();
+    let p = 0; re.lastIndex = 0; let m;
+    while((m = re.exec(text)) !== null){
+      const start = m.index, end = re.lastIndex;
+      const prev = text[start-1], next = text[end];
+      const isBoundary = !isLetterOrDigit(prev) && !isLetterOrDigit(next);
+      if(isBoundary){
+        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); }
+        const span = document.createElement('span');
+        span.className = 'neon-word breathe';
+        span.textContent = m[0];
+        frag.appendChild(span);
+        p = end;
+      }
+    }
+    if(p < text.length) frag.appendChild(document.createTextNode(text.slice(p)));
+    node.parentNode.replaceChild(frag, node);
+  }
+  function walkAndHighlight(root, re){
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(n){ return (!n.nodeValue || !n.nodeValue.trim()) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; }
+    });
+    const texts = []; let cur;
+    while(cur = walker.nextNode()){
+      if(cur.parentElement && cur.parentElement.closest('.neon-word')) continue;
+      texts.push(cur);
+    }
+    texts.forEach(n => highlightNodeText(n, re));
+  }
+  function highlightLetter(){
+    const re = buildRegex(NEON_WORDS);
+    if(!re) return; walkAndHighlight(letterEl, re);
+  }
+
+  // PS toggle
+  psToggle.addEventListener('click', ()=>{
+    psText.classList.toggle('show');
+    psToggle.setAttribute('aria-expanded', psText.classList.contains('show') ? 'true' : 'false');
+  });
+
+  // Name double-click
+  nameEl.addEventListener('dblclick', ()=>{
+    nameEl.classList.add('ringflash');
+    setTimeout(()=> nameEl.classList.remove('ringflash'), 450);
+  });
+
+  // Music
+  let isPlaying = false;
+  let didFirstFade = false;
+  function vizOn(){ musicViz?.classList.add("on"); }
+  function vizOff(){ musicViz?.classList.remove("on"); }
+  function fadeInTo(targetVol= volumeEl.value/100, ms=1000){
+    const steps = Math.max(1, Math.floor(ms/50)); let k=0; const start=0; bgm.volume=0;
+    const it = setInterval(()=>{
+      k++; bgm.volume = start + (targetVol - start) * (k/steps);
+      if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
+    },50);
+  }
+  async function tryPlay(){
+    try{
+      if (fxOpen && fxOpen.src && !fxOpen.error) {
+        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; fxOpen.play(); }catch(e){}
+      }
+      await bgm.play(); isPlaying = true;
+      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(volumeEl.value/100, 1000); }
+      else{ bgm.volume = volumeEl.value / 100; }
+      musicBtn.textContent = "Melodie 🎵"; vizOn();
+    }catch(e){
+      alert("Audio-Fehler: " + (e?.name || "") + " " + (e?.message || "")); isPlaying = false; vizOff();
+    }
+  }
+  musicBtn.addEventListener("click", async ()=>{
+    if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
+    if(isPlaying){ bgm.pause(); isPlaying=false; musicBtn.textContent="Melodie 🎵"; vizOff(); }
+    else{ await tryPlay(); }
+  });
+  bgm.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+  bgm.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+  volumeEl.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
+
+  // Open → show card
+  const typeWriterDelay = 500;
+  const envEl = document.getElementById("envelope");
+  openBtn.addEventListener("click", async (ev)=>{
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = openBtn.getBoundingClientRect();
+    const x = (ev.clientX || (rect.left+rect.width/2)) - rect.left;
+    const y = (ev.clientY || (rect.top+rect.height/2)) - rect.top;
+    r.style.left = x + 'px'; r.style.top = y + 'px';
+    openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
+
+    if(sealEl){ sealEl.classList.add('wiggle'); setTimeout(()=> sealEl.classList.remove('wiggle'), 360); }
+
+    envEl.classList.add("opened");
+    setTimeout(async ()=>{
+      card.classList.add("show");
+      typeWriter(letterText, letterEl);
+      await tryPlay();
+    }, typeWriterDelay);
+  });
+
+  /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
+  function mmToPx(mm){
+    const el=document.createElement('div');
+    el.style.height=mm+'mm';
+    el.style.position='absolute';
+    el.style.visibility='hidden';
+    document.body.appendChild(el);
+    const px=el.getBoundingClientRect().height;
+    el.remove();
+    return px;
+  }
+
+  function computePrintScale(){
+    try{
+      // باید با @page برابر باشد:
+      const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
+      const PAGE_W=210, PAGE_H=297;              // A4 mm
+
+      const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
+      const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
+
+      // کارت ممکن است در حالت عادی display:none باشد (قبل از باز کردن)
+      const prevDisplay = getComputedStyle(card).display;
+      const prevWidth = card.style.width;
+
+      // موقتاً برای اندازه‌گیری، نمایش و عرض را تنظیم می‌کنیم
+      card.style.display = 'block';
+      card.style.width = printableWpx + 'px';
+
+      const contentH = card.scrollHeight; // ارتفاع واقعی محتوا
+
+      const zoom = Math.min(1, printableHpx / contentH); // هرگز >1 بزرگ نکن
+      document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
+
+      // بازگردانی حالت قبلی
+      card.style.width = prevWidth;
+      card.style.display = prevDisplay;
+
+      return zoom;
+    }catch(e){
+      document.documentElement.style.setProperty('--print-zoom','1');
+      return 1;
+    }
+  }
+
+  // دکمهٔ PDF
+  pdfBtn.addEventListener("click", ()=>{
+    computePrintScale();
+    setTimeout(()=> window.print(), 30);
+  });
+
+  // وقتی کاربر از Ctrl+P استفاده کند هم اعمال شود
+  window.addEventListener('beforeprint', computePrintScale);
+  window.addEventListener('afterprint', ()=>{
+    document.documentElement.style.removeProperty('--print-zoom');
+  });
+
+  // Replay letter
+  replayBtn.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
+
+  // Quotes + progress + swipe
+  const QUOTES = [
+    {text:"Du bist das Kapitel, das ich niemals beenden möchte.", author:""},
+    {text:"Jeden Morgen, wenn ich aufwache, bist du mein erster Gedanke.", author:""},
+    {text:"Das Wort LIEBE bedeutet für mich nur deinen Namen.", author:""},
+    {text:"Mein Herz findet bei niemandem Ruhe – nur der Gedanke an dich ist wie ein Wiegenlied für meine Seele.", author:""},
+    {text:"Wenn die Welt für einen Moment still wird, wird sie durch dein Lachen wieder hell für mich.", author:""},
+    {text:"Du bist nicht einfach nur ein Mensch – du bist ein Gefühl, so besonders.", author:""},
+    {text:"Je mehr Zeit vergeht, desto sicherer bin ich – Liebe bedeutet DU.", author:""},
+    {text:"Die ganze Welt auf einer Seite, dein Lächeln auf der anderen – und ich? Ich bin immer auf der Seite deines Lächelns.", author:""},
+    {text:"Du bist mein Für immer – auch wenn sich die Jahreszeiten ändern, bleibst du fest in meinem Herzen.", author:""},
+    {text:"Du bist die Person, an die ich unbewusst denke… vor jeder Handlung, vor jeder Entscheidung, vor jedem Lächeln.", author:""},
+    {text:"Dich zu lieben war keine Wahl… es war ein Ereignis. So ein Ereignis, das man nicht aufhalten kann.“", author:""},
+    {text:"Wenn mich eines Tages die ganze Welt vergisst, reicht es mir, dass du dich an mich erinnerst.", author:""},
+    {text:"Jedes Mal, wenn ich in deine Augen schaue, fühlt es sich an, als würde die Welt für einen Moment nur uns beiden gehören.", author:""},
+    {text:"Du bist wie ein süßes Geheimnis in meinem Leben, das niemand außer mir fühlen kann.", author:""},
+    {text:"Die Entfernung von dir ist wie eine Nacht ohne Mond … dunkel, kalt und endlos.", author:""},
+    {text:"Du überbrückst die Entfernung nicht, aber mit dem Gedanken an dich wird sogar diese Distanz süß.", author:""},
+    {text:"In jedem Moment, in dem ich von dir entfernt bin, ist mein Herz voller Worte, die nur für dich bestimmt sind.", author:""},
+    {text:"Ich habe deine Hand nie berührt, aber das Gefühl deiner Nähe in meinem Herzen hält mich am Leben.", author:""},
+    {text:"Die Ferne von dir ist wie ein unvollendetes Gedicht… jede Zeile erinnert an dich.", author:""},
+    {text:"Die Entfernung von dir ist das Einzige, das mich daran erinnert, wie wertvoll deine Anwesenheit für mich ist.", author:""},
+    {text:"Die Entfernung von dir schmeckt bitter, aber die Erinnerung an dich macht sie süß.", author:""},
+    {text:"Selbst wenn du so weit weg bist, scheint es, als wären all deine Erinnerungen bei mir und sprechen mit mir.", author:""},
+    {text:"Ich vermisse deine Stimme, deinen Blick und sogar dein Schweigen.", author:""},
+    {text:"Entfernungen trennen nur die Körper, nicht die Herzen; mein Herz ist immer bei dir", author:""},
+    {text:"Die Entfernung von dir bedeutet, in der Sehnsucht nach dem Moment zu leben, in dem ich dich wiedersehe.", author:""},
+    {text:"Meine Liebe zu dir ist wie der Regen – unaufhörlich und endlos.", author:""},
+    {text:"Mit dir zu sein bedeutet, jeden Tag in einem Traum zu leben.", author:""},
+    {text:"Jeder Moment ohne dich – da sind es deine Erinnerungen, die mich am Leben halten.", author:""},
+    {text:"Ich vermisse dich so sehr, dass selbst die Sterne traurig wirken.", author:""},
+    {text:"Mit dir zu sein bedeutet, das Leben mit all seinen Farben und Klängen zu erleben.", author:""},
+    {text:"Du bist derjenige, der mit einer einzigen Nachricht all meine Traurigkeit verschwinden lassen kann.", author:""},
+    {text:"Manchmal denke ich, mein Herz ist mehr von dir abhängig als vom Internet – es muss immer mit dir verbunden sein.", author:""},
+    {text:"Du bist der Grund, warum ich manchmal Lust habe, nur für dich zu singen – selbst wenn meine Stimme gar nicht gut ist.", author:""},
+    {text:"Du bist wie mein Morgenkaffee – warm und absolut unverzichtbar!", author:""},
+    {text:"Manchmal wünsche ich mir, du würdest mir eine kleine Schachtel voller deiner Lacher machen.", author:""},
+    {text:"Manchmal möchte ich für dich Gedichte sagen, auch wenn die Reime falsch sind.", author:""},
+    {text:"Mit dir ist sogar ein einziger Moment der Trennung die längste Sekunde überhaupt.", author:""},
+    {text:"Mit dir zu sein bedeutet, dass ich selbst dann, wenn ich wütend bin, dich einfach nur umarmen möchte.", author:""},
+    {text:"Manchmal möchte ich einfach nur deine Träume berühren und spüren, dass du wirklich da bist.", author:""},
+    {text:"Roya, du bist wie eine Brise, die meine Seele selbst dann sanft berührt, wenn du nicht da bist.", author:""},
+    {text:"Manchmal wünsche ich mir, dich einfach festzuhalten und die Zeit anzuhalten.", author:""},
+    {text:"Mit dir schenkt mir sogar ein kurzer Blick tausend verliebte Gefühle.", author:""},
+    {text:"Du bist wie ein geheimnisvolles Buch – jede Seite von dir trägt ein neues Gefühl in sich.", author:""},
+    {text:"Mit dir zusammen zu sein bedeutet, dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
+    {text:"Du bist wie ein romantischer Film, von dem man nie müde wird, ihn wieder und wieder anzuschauen.", author:""},
+    {text:"Du bist illegal hübsch; ich glaub, du solltest bestraft werden.", author:""},
+    {text:"Du bist genau derjenige, der mein Gehirn durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
+    {text:"„Wenn ich nur eine Minute von dir weg bin, fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
+    {text:"Du bist wie mein Morgenkaffee – selbst wenn du bitter wärst, ohne dich könnte mein Tag gar nicht beginnen.", author:""},
+    {text:"Du bist diejenige, wegen der ich den halben Tag nachdenke und die andere Hälfte lache.", author:""},
+    {text:"Wenn ich könnte, würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
+    {text:"Roya, du bist wie starkes WLAN – wenn du nicht da bist, fühlt sich die ganze Welt langsam und langweilig an.", author:""},
+    {text:"„Jedes Mal, wenn du mir schreibst, fühlt es sich an, als würde eine Kugel voller Glück mich treffen.“", author:""},
+    {text:"", author:""},
+    {text:"", author:""},
+    {text:"", author:""},
+    {text:"", author:""},
+    {text:"Ich liebe dich – nicht wie die anderen, sondern wie den ersten Herzschlag, der merkt, dass er lebt, nur weil es dich gibt.", author:""}
+  ];
+  let idx = 0, autoTimer = null;
+  const AUTOPLAY_INTERVAL = 6000;
+
+  function renderDots(){
+    dotsWrap.innerHTML = "";
+    QUOTES.forEach((_, i)=>{
+      const d = document.createElement("button");
+      d.className = "dot";
+      d.setAttribute("aria-label", `Zitat ${i+1} von ${QUOTES.length}`);
+      d.addEventListener("click", ()=> { showQuote(i); stopAuto(); });
+      dotsWrap.appendChild(d);
+    });
+  }
+  function restartProgress(){
+    if(!qProgress) return;
+    qProgress.style.setProperty('--qdur', AUTOPLAY_INTERVAL + 'ms');
+    qProgress.classList.remove('run'); void qProgress.offsetWidth; qProgress.classList.add('run');
+  }
+  function stopProgress(){
+    if(!qProgress) return;
+    qProgress.classList.remove('run');
+    const bar = qProgress.querySelector('.bar'); if(bar) bar.style.width='0%';
+  }
+  function showQuote(i){
+    idx = (i + QUOTES.length) % QUOTES.length;
+    quoteText.classList.remove("fade"); void quoteText.offsetWidth;
+    quoteText.textContent = "„" + QUOTES[idx].text + "“";
+    quoteText.classList.add("fade");
+    quoteAuthor.textContent = QUOTES[idx].author ? "— " + QUOTES[idx].author : "";
+    [...dotsWrap.children].forEach((d,k)=> d.classList.toggle("active", k===idx));
+    if(autoTimer) restartProgress();
+  }
+  function next(){ showQuote(idx+1); }
+  function prev(){ showQuote(idx-1); }
+  function randomQuote(){
+    let j = Math.floor(Math.random()*QUOTES.length);
+    if(j===idx) j = (j+1)%QUOTES.length;
+    showQuote(j);
+    const h = document.createElement('span');
+    h.className = 'pulse-heart';
+    h.textContent = '💖';
+    quoteText.appendChild(h);
+    setTimeout(()=> h.remove(), 420);
+  }
+  function startAuto(){
+    if(autoTimer) return;
+    autoTimer = setInterval(next, AUTOPLAY_INTERVAL);
+    autoBtn.textContent = "Herzschlag: An 💞";
+    autoBtn.setAttribute("aria-pressed","true");
+    quoteText.classList.add("heartbeat");
+    restartProgress();
+  }
+  function stopAuto(){
+    if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
+    autoBtn.textContent = "Herzschlag: Aus 🤍";
+    autoBtn.setAttribute("aria-pressed","false");
+    quoteText.classList.remove("heartbeat");
+    stopProgress();
+  }
+  prevBtn.addEventListener("click", ()=>{ prev(); stopAuto(); });
+  nextBtn.addEventListener("click", ()=>{ next(); stopAuto(); });
+  randBtn.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
+  autoBtn.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
+
+  // Swipe (mobile)
+  let touchStartX=null, touchStartY=null, touchEndX=null, touchEndY=null;
+  const SWIPE_THRESHOLD = 40;
+  quotesSection.addEventListener('touchstart', (e)=>{
+    const t = e.changedTouches[0]; touchStartX = t.clientX; touchStartY = t.clientY;
+  }, {passive:true});
+  quotesSection.addEventListener('touchend', (e)=>{
+    const t = e.changedTouches[0]; touchEndX = t.clientX; touchEndY = t.clientY;
+    const dx = touchEndX - touchStartX; const dy = touchEndY - touchStartY;
+    if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD){
+      if(dx < 0){ next(); } else { prev(); }
+      stopAuto();
+    }
+  }, {passive:true});
+
+  // Seal wiggle on pointerdown
+  if(sealEl){
+    sealEl.addEventListener('pointerdown', ()=>{
+      sealEl.classList.add('wiggle');
+      setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
+    });
+  }
+
+  // Init
+  renderDots();
+  showQuote(0);
+</script>
+</body>
+</html>
