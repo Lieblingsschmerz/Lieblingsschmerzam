@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>💌Mein Lieblingsschmerz💌</title>
 
+<title>💌Mein Lieblingsschmerz💌</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="theme-color" content="#ff4b6e">
@@ -62,12 +62,14 @@
       repeating-linear-gradient(0deg, rgba(0,0,0,.01), rgba(0,0,0,.01) 1px, transparent 1px, transparent 2px);
     pointer-events:none;
   }
+
   .env-label{
     position:absolute; left:24px; right:24px; bottom:24px;
     background:#fff; border:1px solid #ffcad4; border-radius:14px;
     padding:10px 14px; text-align:center; font-weight:700;
     box-shadow:0 10px 20px rgba(255,75,110,.08) inset, 0 8px 20px rgba(0,0,0,.06);
   }
+
   .flap{
     position:absolute; top:0; left:0; right:0; height:58%;
     transform-origin: top center; transform: rotateX(0deg);
@@ -180,7 +182,6 @@
     opacity:.45;
   }
 
-  /* Header + symmetric ribbon chip */
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
@@ -208,7 +209,6 @@
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
   }
 
-  /* Subtle golden corner florals */
   .gilded-corner{
     position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
   }
@@ -258,7 +258,8 @@
   @keyframes fade{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:translateY(0)}}
 
   .divider{
-    --gap: 14px; --thick: 1.5px;
+    --gap: 14px;
+    --thick: 1.5px;
     position:relative; height:22px; margin:14px 0;
   }
   .divider::before{
@@ -291,7 +292,6 @@
   .dot.active{ background:var(--dot-active); border-color:var(--dot-active); transform:scale(1.05); }
 
   .q-actions{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px}
-
   .q-progress{ height:2px; background:rgba(249,230,182,.35); border-radius:999px; overflow:hidden; margin:6px 12px 0; }
   .q-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold2)); }
   .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
@@ -363,7 +363,8 @@
       box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
       zoom: var(--print-zoom, 1) !important;
-      transform: none !important; transform-origin: top left !important;
+      transform: none !important;
+      transform-origin: top left !important;
     }
     .card::before, .card::after,
     .gilded-corner, .stamp-cancel, .origami-line,
@@ -372,6 +373,7 @@
     .letter{ font-size:18px !important; line-height:1.9 !important; }
     .print-sign{ display:block !important; margin-top:12mm; text-align:right; font-family:cursive; opacity:.9; }
   }
+
   .print-sign{ display:none; }
 </style>
 </head>
@@ -384,7 +386,6 @@
       <div class="seal" id="seal" aria-hidden="true">R</div>
       <div class="stamp" aria-hidden="true">💘</div>
 
-      <!-- post cancellation (gold) -->
       <div class="stamp-cancel" aria-hidden="true">
         <svg viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 10 C45 0, 85 20, 130 10 S200 20, 220 10" stroke-width="2" fill="none"/>
@@ -393,7 +394,6 @@
         </svg>
       </div>
 
-      <!-- short origami line -->
       <div class="origami-line" aria-hidden="true">
         <svg viewBox="0 0 120 22" xmlns="http://www.w3.org/2000/svg" fill="none">
           <path d="M6 16 L34 6 L62 16 L90 6 L114 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -413,7 +413,6 @@
       </div>
 
       <div class="card-body">
-        <!-- subtle golden florals -->
         <div class="gilded-corner tl" aria-hidden="true">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="24" cy="24" r="6"/>
@@ -505,7 +504,8 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const NEON_WORDS = ["Roya","to","donyam"];
 
   // Elements
-  const envEl = document.getElementById("envelope");
+  const env = document.getElementById("envelope");
+  const envEl = document.getElementById("envelope"); // برای سازگاری با کدهای قبلی
   const openBtn = document.getElementById("openBtn");
   const card = document.getElementById("card");
   const letterEl = document.getElementById("letter");
@@ -548,6 +548,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     return new RegExp(`(${pattern})`,'giu');
   }
   function isLetterOrDigit(ch){ return ch && /\p{L}|\p{N}/u.test(ch); }
+
   function highlightNodeText(node, re){
     const text = node.nodeValue;
     if(!text || !re.test(text)) return;
@@ -597,7 +598,16 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     setTimeout(()=> nameEl.classList.remove('ringflash'), 450);
   });
 
-  // Music helpers
+  // ---- Helpers: iOS / PWA detection ----
+  const isIOS = () =>
+    /iP(ad|hone|od)/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  const isStandalone = () =>
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    (window.navigator && window.navigator.standalone === true);
+
+  // Music
   let isPlaying = false;
   let didFirstFade = false;
   function vizOn(){ musicViz?.classList.add("on"); }
@@ -612,7 +622,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   async function tryPlay(){
     try{
       if (fxOpen && fxOpen.src && !fxOpen.error) {
-        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; fxOpen.play(); }catch(e){}
+        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.05; fxOpen.volume=.35; fxOpen.play(); }catch(e){}
       }
       await bgm.play(); isPlaying = true;
       if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(); }
@@ -632,21 +642,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // iOS/PWA relaunch sanity: reset audio state on pageshow (esp. from Home Screen)
-  window.addEventListener('pageshow', ()=>{
-    try{
-      bgm.pause();
-      bgm.currentTime = 0;
-      bgm.muted = false;
-      bgm.defaultMuted = false;
-      bgm.volume = 0;
-      isPlaying = false;
-      vizOff();
-      musicBtn && (musicBtn.textContent = "Melodie 🎵");
-    }catch(e){}
-  });
-
-  // --- OPEN: show card + robust iOS/PWA audio start ---
+  // ---- Open → show card  (iOS/PWA-safe audio) ----
   openBtn.addEventListener("click", async (ev)=>{
     // Ripple
     const r = document.createElement('span');
@@ -654,8 +650,10 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     const rect = openBtn.getBoundingClientRect();
     const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
     const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
-    r.style.left = x + 'px'; r.style.top = y + 'px';
-    openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
+    r.style.left = x + 'px'; 
+    r.style.top  = y + 'px';
+    openBtn.appendChild(r); 
+    setTimeout(()=> r.remove(), 650);
 
     // Seal wiggle
     if (sealEl){
@@ -663,40 +661,57 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
     }
 
-    // iOS/PWA audio fix: play() inside gesture, volume after resolve
+    const targetVol = (volumeEl?.value || 70) / 100;
+    const rampVolume = (to=targetVol, ms=700)=>{
+      const steps = Math.max(1, Math.floor(ms/50));
+      let k=0;
+      clearInterval(rampVolume.__it);
+      rampVolume.__it = setInterval(()=>{
+        k++; bgm.volume = Math.min(to, (k/steps)*to);
+        if(k>=steps){ clearInterval(rampVolume.__it); bgm.volume = to; }
+      },50);
+    };
+
+    const inIOSPWA = isIOS() && isStandalone();
+
     try{
-      // Paper FX (fire-and-forget)
-      if (fxOpen && fxOpen.src) {
-        try { fxOpen.currentTime = 0; fxOpen.muted = false; fxOpen.play().catch(()=>{}); } catch(e){}
+      // paper SFX
+      if (fxOpen && fxOpen.src && !fxOpen.error) {
+        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.05; fxOpen.volume=.35; fxOpen.play(); }catch{}
       }
 
-      const target = Math.max(0.05, (volumeEl?.value || 70) / 100);
-      bgm.muted = false; bgm.defaultMuted = false;
+      if (inIOSPWA){
+        try { bgm.pause(); } catch {}
+        bgm.muted  = true;
+        bgm.volume = 0;
+        bgm.currentTime = 0;
+        try { bgm.load(); } catch {}
+        await bgm.play();            // play داخل ژست کاربر
+        bgm.muted = false;           // بعد از resolve
+        rampVolume(targetVol, 700);  // فیداین
 
-      // In case it's "playing but silent" from a previous session
-      if (!bgm.paused) { try{ bgm.pause(); }catch{} }
+        isPlaying = true;
+        musicBtn.textContent = "Melodie 🎵";
+        vizOn();
 
-      bgm.volume = 0;
-      try { if (bgm.readyState < 2) bgm.load(); } catch(e){}
-
-      const p = bgm.play();
-      if (p && p.then) { await p; } // wait resolve
-
-      // Now lift volume > 0 (key step for WebKit PWA)
-      let v = 0, steps = 12, step = target/steps;
-      const fade = setInterval(()=>{
-        v += step; bgm.volume = Math.min(target, v);
-        if (v >= target){ clearInterval(fade); bgm.volume = target; }
-      }, 40);
-
-      isPlaying = true;
-      musicBtn && (musicBtn.textContent = "Melodie 🎵");
-      vizOn();
+        // یک تلاش ایمنی
+        setTimeout(async ()=>{
+          if (bgm.paused || bgm.volume === 0){
+            try{
+              await bgm.play();
+              bgm.muted = false;
+              rampVolume(targetVol, 700);
+            }catch{}
+          }
+        }, 450);
+      } else {
+        await tryPlay();
+      }
     }catch(e){
-      console.warn("Audio start (iOS/PWA) failed:", e);
+      console.warn('Audio start error:', e);
     }
 
-    // Open envelope → show card + type
+    // Show letter
     envEl.classList.add("opened");
     setTimeout(()=>{
       card.classList.add("show");
@@ -704,18 +719,23 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     }, 500);
   });
 
-  /* ===== Print one-page scale ===== */
+  /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
   function mmToPx(mm){
     const el=document.createElement('div');
-    el.style.height=mm+'mm'; el.style.position='absolute'; el.style.visibility='hidden';
+    el.style.height=mm+'mm';
+    el.style.position='absolute';
+    el.style.visibility='hidden';
     document.body.appendChild(el);
-    const px=el.getBoundingClientRect().height; el.remove();
+    const px=el.getBoundingClientRect().height;
+    el.remove();
     return px;
   }
+
   function computePrintScale(){
     try{
       const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
       const PAGE_W=210, PAGE_H=297;              // A4 mm
+
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
@@ -726,23 +746,29 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       card.style.width = printableWpx + 'px';
 
       const contentH = card.scrollHeight;
+
       const zoom = Math.min(1, printableHpx / contentH);
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
+
       return zoom;
     }catch(e){
       document.documentElement.style.setProperty('--print-zoom','1');
       return 1;
     }
   }
+
   pdfBtn?.addEventListener("click", ()=>{
     computePrintScale();
     setTimeout(()=> window.print(), 30);
   });
+
   window.addEventListener('beforeprint', computePrintScale);
-  window.addEventListener('afterprint', ()=>{ document.documentElement.style.removeProperty('--print-zoom'); });
+  window.addEventListener('afterprint', ()=>{
+    document.documentElement.style.removeProperty('--print-zoom');
+  });
 
   // Replay letter
   replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
@@ -792,11 +818,11 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Manchmal wünsche ich mir, dich einfach festzuhalten und die Zeit anzuhalten.", author:""},
     {text:"Mit dir schenkt mir sogar ein kurzer Blick tausend verliebte Gefühle.", author:""},
     {text:"Du bist wie ein geheimnisvolles Buch – jede Seite von dir trägt ein neues Gefühl in sich.", author:""},
-    {text:"Mit dir zusammen zu sein bedeutet, dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
+    {text:"Mit dir zusammen zu sein bedeutet، dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
     {text:"Du bist wie ein romantischer Film, von dem man nie müde wird, ihn wieder und wieder anzuschauen.", author:""},
     {text:"Du bist illegal hübsch; ich glaub, du solltest bestraft werden.", author:""},
     {text:"Du bist genau derjenige, der mein Gehirn durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
-    {text:"„Wenn ich nur eine Minute von dir weg bin, fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
+    {text:"„Wenn ich nur eine Minute von dir weg bin، fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
     {text:"Du bist wie mein Morgenkaffee – selbst wenn du bitter wärst, ohne dich könnte mein Tag gar nicht beginnen.", author:""},
     {text:"Du bist diejenige, wegen der ich den halben Tag nachdenke und die andere Hälfte lache.", author:""},
     {text:"Wenn ich könnte, würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
@@ -809,7 +835,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   function renderDots(){
     dotsWrap.innerHTML = "";
-    QUOTES.forEach((_, i)=>{
+    QUOTES.forEach((q, i)=>{
       const d = document.createElement("button");
       d.className = "dot";
       d.setAttribute("aria-label", `Zitat ${i+1} von ${QUOTES.length}`);
@@ -883,7 +909,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     }
   }, {passive:true});
 
-  // Seal wiggle on pointerdown
+  // Seal wiggle
   sealEl?.addEventListener('pointerdown', ()=>{
     sealEl.classList.add('wiggle');
     setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
@@ -892,6 +918,34 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   // Init
   renderDots();
   showQuote(0);
+
+  // ---- iOS PWA: resume after background (mute/unmute fix) ----
+  document.addEventListener('visibilitychange', ()=>{
+    if (!document.hidden && isIOS() && isStandalone()){
+      if (!bgm.paused && (bgm.muted || bgm.volume === 0)){
+        try{
+          bgm.muted = false;
+          if (bgm.paused) bgm.play().catch(()=>{});
+          (function ramp(to=((volumeEl?.value||70)/100), ms=600){
+            const steps = Math.max(1, Math.floor(ms/50));
+            let k=0; clearInterval(ramp.__it);
+            ramp.__it = setInterval(()=>{
+              k++; bgm.volume = Math.min(to, (k/steps)*to);
+              if(k>=steps){ clearInterval(ramp.__it); bgm.volume = to; }
+            },50);
+          })();
+        }catch{}
+      }
+    }
+  });
+
+  window.addEventListener('pageshow', ()=>{
+    if (isIOS() && isStandalone()){
+      if (!bgm.paused && (bgm.muted || bgm.volume === 0)){
+        try{ bgm.muted = false; bgm.play().then(()=>{ bgm.volume = (volumeEl?.value||70)/100; }).catch(()=>{}); }catch{}
+      }
+    }
+  });
 </script>
 </body>
 </html>
