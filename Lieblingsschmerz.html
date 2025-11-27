@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>💌Mein Lieblingsschmerz💌</title>
 <style>
   :root{
@@ -24,18 +25,17 @@
     --print-zoom: 1;
   }
 
-  *{box-sizing:border-box}
   html,body{height:100%;margin:0}
   body{
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
     color:var(--ink);
     display:flex;align-items:center;justify-content:center;
+    /* پدینگ پایینی را با safe-area + فاصلهٔ اضافه جمع می‌کنیم */
     padding:28px;
     padding-top:    max(28px, env(safe-area-inset-top));
     padding-right:  max(28px, env(safe-area-inset-right));
     padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
     padding-left:   max(28px, env(safe-area-inset-left));
-    -webkit-tap-highlight-color: transparent;
 
     /* Romantic Rosé + Champagne layered background */
     background:
@@ -47,7 +47,6 @@
       #fffaf6;
     background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
     position:relative; overflow-x:hidden;
-    text-rendering: optimizeLegibility;
   }
 
   .stage{position:relative; width:min(760px,96vw);}
@@ -104,7 +103,13 @@
     background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.5) 0, transparent 45%);
     filter: blur(2px); pointer-events:none;
   }
-  @keyframes wiggle{ 0%{transform:translate(-50%,-50%) rotate(0)}25%{transform:translate(-50%,-50%) rotate(-6deg)}50%{transform:translate(-50%,-50%) rotate(6deg)}75%{transform:translate(-50%,-50%) rotate(-3deg)}100%{transform:translate(-50%,-50%) rotate(0)} }
+  @keyframes wiggle{
+    0%  { transform:translate(-50%,-50%) rotate(0deg); }
+    25% { transform:translate(-50%,-50%) rotate(-6deg); }
+    50% { transform:translate(-50%,-50%) rotate(6deg); }
+    75% { transform:translate(-50%,-50%) rotate(-3deg); }
+    100%{ transform:translate(-50%,-50%) rotate(0deg); }
+  }
   .seal.wiggle{ animation: wiggle .35s ease; }
 
   /* Öffnen button + ripple */
@@ -115,7 +120,6 @@
     box-shadow:0 14px 24px rgba(255,75,110,.35), 0 2px 0 rgba(160,20,50,.25) inset;
     transition: transform .12s ease, box-shadow .12s ease;
     position:relative; overflow:hidden;
-    touch-action: manipulation;
   }
   .open-btn:active{ transform:translateY(1px) }
   .open-btn::after{
@@ -136,23 +140,33 @@
       transparent 70%);
     animation: rippleOut .6s ease-out forwards;
   }
-  @keyframes rippleOut{ from{ width:0;height:0; opacity:.35 } to{ width:220px;height:220px; opacity:0 } }
+  @keyframes rippleOut{
+    from{ width:0;height:0; opacity:.35 }
+    to  { width:220px;height:220px; opacity:0 }
+  }
 
   .opened .flap{ transform: rotateX(-185deg); }
   .opened .open-wrap{display:none}
 
   /* Origami short line */
-  .origami-line{ position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8; }
+  .origami-line{
+    position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8;
+  }
   .origami-line svg path{ stroke: rgba(247,213,143,.85); }
 
   /* Post stamp cancellation (gold waves) */
-  .stamp-cancel{ position:absolute; top:24px; left:62px; width:160px; height:70px; transform: rotate(-16deg); pointer-events:none; opacity:.66; }
+  .stamp-cancel{
+    position:absolute; top:24px; left:62px; width:160px; height:70px; transform: rotate(-16deg);
+    pointer-events:none; opacity:.66;
+  }
   .stamp-cancel svg path{ stroke: rgba(245,198,106,.55); }
 
   /* Card */
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
+
+    /* فاصلهٔ اضافه تا کف صفحه (برای دیده‌شدن کامل قاب طلایی پایین) */
     margin-bottom: calc(var(--floor-gap) * .6);
   }
   .card.show{display:block; animation:pop .7s ease}
@@ -185,24 +199,35 @@
     padding:8px 18px; border-radius:12px;
     border:1px solid #ffd6e3; box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
   }
-  .chip.ribbon::before,.chip.ribbon::after{
+  .chip.ribbon::before,
+  .chip.ribbon::after{
     content:""; position:absolute; top:50%; width:16px; height:16px;
     background:#ffeaf2; border:1px solid #ffd6e3;
     box-shadow:0 0 0 1px rgba(255,255,255,.7) inset;
     transform:translateY(-50%) rotate(45deg);
   }
-  .chip.ribbon::before{ left:-10px; } .chip.ribbon::after{ right:-10px; }
+  .chip.ribbon::before{ left:-10px; }
+  .chip.ribbon::after{  right:-10px; }
 
-  .card-body{ padding:24px; line-height:1.95; position:relative; overflow-wrap: anywhere; }
-  .card-body::after{ content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none; box-shadow: inset 0 0 80px rgba(255, 206, 216, .20); }
+  .card-body{ padding:24px; line-height:1.95; position:relative }
+  .card-body::after{
+    content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
+    box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
+  }
 
   /* Subtle golden corner florals */
-  .gilded-corner{ position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px); }
-  .gilded-corner svg path, .gilded-corner svg circle{ stroke: rgba(247,213,143,.8); fill: rgba(247,213,143,.18); }
+  .gilded-corner{
+    position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
+  }
+  .gilded-corner svg path,
+  .gilded-corner svg circle{
+    stroke: rgba(247,213,143,.8);
+    fill: rgba(247,213,143,.18);
+  }
   .gilded-corner.tl{ top:10px; left:10px; transform: rotate(0deg); }
   .gilded-corner.br{ bottom:10px; right:10px; transform: rotate(180deg); }
 
-  h1{font-size:26px; margin:0 0 6px; text-wrap:balance}
+  h1{font-size:26px; margin:0 0 6px}
   .subline{ font-size:14px; opacity:.85; margin:-2px 0 10px; font-style:italic; direction: rtl; }
 
   .gold{
@@ -212,7 +237,11 @@
   .gold.glint{ background-size:200% auto; animation:goldglint 9.2s linear infinite; }
   @keyframes goldglint{ 0%{background-position:-60% 0} 45%{background-position:160% 0} 100%{background-position:160% 0} }
 
-  .gold.neon{ -webkit-text-stroke: 1px rgba(247,213,143,.85); text-shadow:0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25); filter: drop-shadow(0 0 6px rgba(247,213,143,.22)); }
+  .gold.neon{
+    -webkit-text-stroke: 1px rgba(247,213,143,.85);
+    text-shadow:0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25);
+    filter: drop-shadow(0 0 6px rgba(247,213,143,.22));
+  }
   .gold.neon.breathe{ animation: neon-outline-breathe 2.8s ease-in-out infinite; }
 
   #letter .neon-word{
@@ -224,8 +253,10 @@
   }
   #letter .neon-word.breathe{ animation: neon-outline-breathe 2.4s ease-in-out infinite; }
   @keyframes neon-outline-breathe{
-    0%,100%{ text-shadow: 0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25); filter: drop-shadow(0 0 6px rgba(247,213,143,.22)); }
-    50%   { text-shadow: 0 0 4px rgba(247,213,143,.60), 0 0 10px rgba(245,198,106,.42), 0 0 20px rgba(249,230,182,.35); filter: drop-shadow(0 0 8px rgba(247,213,143,.30)); }
+    0%,100%{ text-shadow: 0 0 3px rgba(247,213,143,.45), 0 0 8px rgba(245,198,106,.30), 0 0 16px rgba(249,230,182,.25);
+             filter: drop-shadow(0 0 6px rgba(247,213,143,.22)); }
+    50%   { text-shadow: 0 0 4px rgba(247,213,143,.60), 0 0 10px rgba(245,198,106,.42), 0 0 20px rgba(249,230,182,.35);
+             filter: drop-shadow(0 0 8px rgba(247,213,143,.30)); }
   }
 
   .muted{opacity:.82; font-size:14px}
@@ -277,14 +308,18 @@
   .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
   @keyframes qbar{ from{width:0%} to{width:100%} }
 
-  .pulse-heart{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.6); font-size:22px; pointer-events:none; animation:pulseOut .4s ease forwards; }
+  .pulse-heart{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.6);
+    font-size:22px; pointer-events:none; animation:pulseOut .4s ease forwards;
+  }
   @keyframes pulseOut{ to{ transform:translate(-50%,-50%) scale(1.6); opacity:0 } }
 
   .actions{
     display:flex; gap:10px; align-items:center; justify-content:center;
     flex-wrap:wrap; margin:12px 0 6px;
   }
-  .btn{ border:0; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:800; background:#f6f6f6; transition: box-shadow .15s ease, transform .08s ease; touch-action: manipulation; }
+  .btn{ border:0; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:800; background:#f6f6f6;
+        transition: box-shadow .15s ease, transform .08s ease; }
   .btn:hover{ box-shadow:0 10px 22px rgba(255,75,110,.28), 0 0 0 1px rgba(255,255,255,.6) inset; }
   .btn:active{ transform: translateY(1px); }
   .btn.primary{ background: var(--rose); color:#fff}
@@ -306,7 +341,10 @@
     box-shadow:0 2px 6px rgba(255,75,110,.35);
   }
 
-  .music-visual{ width:100%; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px; opacity:.9; flex-wrap:wrap; }
+  .music-visual{
+    width:100%; display:flex; align-items:center; justify-content:center;
+    gap:8px; margin-top:6px; opacity:.9; flex-wrap:wrap;
+  }
   .music-visual .heart{ font-size:18px; width:22px; text-align:center; transform-origin:center; opacity:.75; }
   .music-visual.on .heart{ animation:mbeat 1.1s ease-in-out infinite; }
   .music-visual.on .heart:nth-child(3n+1){ animation-delay:0s }
@@ -317,43 +355,6 @@
   .ps-toggle{ margin-top:10px; background:#fff1f7; }
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
-
-  @media (prefers-reduced-motion: reduce){
-    .open-btn::after{animation:none}
-    .open-btn, .card.show, .fade,
-    .music-visual .heart,
-    .gold.glint, .gold.neon.breathe,
-    #letter .neon-word.breathe,
-    .seal.wiggle, .ripple, .q-progress .bar { animation-duration:.01ms !important; animation-iteration-count:1 !important; }
-  }
-
-  /* ====== واکنش‌گرا (گوشی‌های کوچک) ====== */
-  @media (max-width: 390px){
-    .stage{ width: min(720px, 94vw); }
-    .envelope{ height:300px; }
-    .env-label{ padding:8px 12px; font-size:13px; }
-    .open-btn{ padding:11px 18px; border-radius:14px; }
-    .gilded-corner{ width:76px; height:76px; }
-    .card-body{ padding:18px; }
-    h1{ font-size:22px; }
-    .letter{ font-size:16px; line-height:1.85; }
-    .q-box{ font-size:18px; line-height:1.7; }
-    :root{ --floor-gap: clamp(48px, 7vh, 120px); }
-  }
-
-  /* ====== ارتفاع‌های کوتاه (landscape موبایل/کوچک) ====== */
-  @media (max-height: 600px){
-    .envelope{ height:260px; }
-    :root{ --floor-gap: clamp(36px, 6vh, 80px); }
-    .card{ margin-bottom: calc(var(--floor-gap) * .4); }
-  }
-
-  /* ====== تبلت‌ها ====== */
-  @media (min-width: 768px) and (max-width: 1024px){
-    .stage{ width:min(820px, 92vw); }
-    .card-body{ padding:22px; }
-    .q-box{ font-size:19px; }
-  }
 
   /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
   @media print{
@@ -367,16 +368,23 @@
     /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
-    .stage > :not(.card){ display:none !important; }
+    .stage > :not(.card){ display:none !important; } /* پاک‌کردن envelope و ... از چیدمان */
     .card, .card *{ visibility:visible !important; }
 
     .card{
       display:block !important; position:static !important;
+
+      /* عرض قبل از زوم؛ تا بعد از zoom دقیقاً به ناحیهٔ قابل‌چاپ بخورد */
       width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
-      margin:0 !important; box-shadow:none !important; border:1px solid #eeeeee !important;
+
+      margin:0 !important;
+      box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
+
+      /* زوم واقعی (Chrome/Edge/Safari) */
       zoom: var(--print-zoom, 1) !important;
-      transform: none !important; transform-origin: top left !important;
+      transform: none !important;
+      transform-origin: top left !important;
     }
 
     .card::before, .card::after,
@@ -605,13 +613,13 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   }
 
   // PS toggle
-  psToggle.addEventListener('click', ()=>{
+  psToggle?.addEventListener('click', ()=>{
     psText.classList.toggle('show');
     psToggle.setAttribute('aria-expanded', psText.classList.contains('show') ? 'true' : 'false');
   });
 
-  // Name double-click
-  nameEl.addEventListener('dblclick', ()=>{
+  // Name double-click (optional flair)
+  nameEl?.addEventListener('dblclick', ()=>{
     nameEl.classList.add('ringflash');
     setTimeout(()=> nameEl.classList.remove('ringflash'), 450);
   });
@@ -621,7 +629,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   let didFirstFade = false;
   function vizOn(){ musicViz?.classList.add("on"); }
   function vizOff(){ musicViz?.classList.remove("on"); }
-  function fadeInTo(targetVol= volumeEl.value/100, ms=1000){
+  function fadeInTo(targetVol= (volumeEl?.value||70)/100, ms=1000){
     const steps = Math.max(1, Math.floor(ms/50)); let k=0; const start=0; bgm.volume=0;
     const it = setInterval(()=>{
       k++; bgm.volume = start + (targetVol - start) * (k/steps);
@@ -634,27 +642,28 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
         try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; fxOpen.play(); }catch(e){}
       }
       await bgm.play(); isPlaying = true;
-      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(volumeEl.value/100, 1000); }
-      else{ bgm.volume = volumeEl.value / 100; }
+      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(); }
+      else{ bgm.volume = (volumeEl?.value||70) / 100; }
       musicBtn.textContent = "Melodie 🎵"; vizOn();
     }catch(e){
-      alert("Audio-Fehler: " + (e?.name || "") + " " + (e?.message || "")); isPlaying = false; vizOff();
+      // بی‌صدا fail نشود
+      console.warn("Audio error:", e);
+      isPlaying = false; vizOff();
     }
   }
-  musicBtn.addEventListener("click", async ()=>{
+  musicBtn?.addEventListener("click", async ()=>{
     if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
     if(isPlaying){ bgm.pause(); isPlaying=false; musicBtn.textContent="Melodie 🎵"; vizOff(); }
     else{ await tryPlay(); }
   });
-  bgm.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
-  bgm.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
-  volumeEl.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
+  bgm?.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+  bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+  volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // Open → show card
+  // Open → show card  (بدون بازتعریف متغیّرها)
   const typeWriterDelay = 500;
-  const envEl = document.getElementById("envelope");
-  const openBtn = document.getElementById("openBtn");
-  openBtn.addEventListener("click", async (ev)=>{
+  openBtn?.addEventListener("click", async (ev)=>{
+    // Ripple
     const r = document.createElement('span');
     r.className = 'ripple';
     const rect = openBtn.getBoundingClientRect();
@@ -663,12 +672,14 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     r.style.left = x + 'px'; r.style.top = y + 'px';
     openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
 
+    // Seal wiggle
     if(sealEl){ sealEl.classList.add('wiggle'); setTimeout(()=> sealEl.classList.remove('wiggle'), 360); }
 
-    envEl.classList.add("opened");
+    // Open envelope
+    env.classList.add("opened");
     setTimeout(async ()=>{
       card.classList.add("show");
-      /* اطمینان از دیده‌شدن کارت در موبایل */
+      // اسکرول نرم تا ابتدای کارت (مخصوص موبایل)
       setTimeout(()=>{ card.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
       typeWriter(letterText, letterEl);
       await tryPlay();
@@ -696,6 +707,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
+      // برای اندازه‌گیری، موقتاً کارت را نشان بده
       const prevDisplay = getComputedStyle(card).display;
       const prevWidth = card.style.width;
 
@@ -704,9 +716,10 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
       const contentH = card.scrollHeight;
 
-      const zoom = Math.min(1, printableHpx / contentH); // هرگز >1 بزرگ نکن
+      const zoom = Math.min(1, printableHpx / contentH); // هرگز بزرگ‌نمایی >1 نکن
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
+      // بازگردانی
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
 
@@ -718,19 +731,19 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   }
 
   // دکمهٔ PDF
-  pdfBtn.addEventListener("click", ()=>{
+  pdfBtn?.addEventListener("click", ()=>{
     computePrintScale();
     setTimeout(()=> window.print(), 30);
   });
 
-  // وقتی کاربر از Ctrl+P استفاده کند هم اعمال شود
+  // Ctrl+P
   window.addEventListener('beforeprint', computePrintScale);
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
   });
 
   // Replay letter
-  replayBtn.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
+  replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
 
   // Quotes + progress + swipe
   const QUOTES = [
@@ -794,7 +807,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   function renderDots(){
     dotsWrap.innerHTML = "";
-    QUOTES.forEach((_, i)=>{
+    QUOTES.forEach((q, i)=>{
       const d = document.createElement("button");
       d.className = "dot";
       d.setAttribute("aria-label", `Zitat ${i+1} von ${QUOTES.length}`);
@@ -848,18 +861,18 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     quoteText.classList.remove("heartbeat");
     stopProgress();
   }
-  prevBtn.addEventListener("click", ()=>{ prev(); stopAuto(); });
-  nextBtn.addEventListener("click", ()=>{ next(); stopAuto(); });
-  randBtn.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
-  autoBtn.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
+  prevBtn?.addEventListener("click", ()=>{ prev(); stopAuto(); });
+  nextBtn?.addEventListener("click", ()=>{ next(); stopAuto(); });
+  randBtn?.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
+  autoBtn?.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
 
   // Swipe (mobile)
   let touchStartX=null, touchStartY=null, touchEndX=null, touchEndY=null;
   const SWIPE_THRESHOLD = 40;
-  quotesSection.addEventListener('touchstart', (e)=>{
+  quotesSection?.addEventListener('touchstart', (e)=>{
     const t = e.changedTouches[0]; touchStartX = t.clientX; touchStartY = t.clientY;
   }, {passive:true});
-  quotesSection.addEventListener('touchend', (e)=>{
+  quotesSection?.addEventListener('touchend', (e)=>{
     const t = e.changedTouches[0]; touchEndX = t.clientX; touchEndY = t.clientY;
     const dx = touchEndX - touchStartX; const dy = touchEndY - touchStartY;
     if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD){
@@ -869,12 +882,10 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   }, {passive:true});
 
   // Seal wiggle on pointerdown
-  if(sealEl){
-    sealEl.addEventListener('pointerdown', ()=>{
-      sealEl.classList.add('wiggle');
-      setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
-    });
-  }
+  sealEl?.addEventListener('pointerdown', ()=>{
+    sealEl.classList.add('wiggle');
+    setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
+  });
 
   // Init
   renderDots();
