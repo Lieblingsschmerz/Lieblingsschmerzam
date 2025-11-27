@@ -21,23 +21,26 @@
     /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
     --floor-gap: clamp(72px, 10vh, 180px);
 
+    /* ارتفاع پاکت وقتی نامه باز شده و به صورت sticky می‌ماند */
+    --env-collapsed-h: clamp(96px, 18svh, 150px);
+
     /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
     --print-zoom: 1;
   }
 
   html,body{height:100%;margin:0}
+  html{scroll-behavior:smooth}
   body{
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
     color:var(--ink);
     display:flex;align-items:center;justify-content:center;
-    /* پدینگ پایینی را با safe-area + فاصلهٔ اضافه جمع می‌کنیم */
     padding:28px;
     padding-top:    max(28px, env(safe-area-inset-top));
     padding-right:  max(28px, env(safe-area-inset-right));
     padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
     padding-left:   max(28px, env(safe-area-inset-left));
 
-    /* پس‌زمینه */
+    /* Romantic Rosé + Champagne layered background */
     background:
       radial-gradient(var(--halo1w) var(--halo1h) at 78% 6%,  rgba(255,241,247,.95), transparent 65%),
       radial-gradient(var(--halo2w) var(--halo2h) at 8% 94%,   rgba(255,227,236,.88), transparent 66%),
@@ -49,10 +52,19 @@
     position:relative; overflow-x:hidden;
   }
 
-  .stage{position:relative; width:min(760px,96vw);}
+  /* وقتی نامه باز می‌شود: حالت فلکسِ مرکزکننده را برمی‌داریم تا اسکرول همیشه کار کند */
+  html.letter-open, body.letter-open{height:auto}
+  body.letter-open{
+    display:block;             /* فلکس خاموش شود تا محدودیت ارتفاع ایجاد نشود */
+    min-height:100svh;         /* واحد واقعیِ viewport روی موبایل */
+    overflow-y:auto;           /* اسکرولِ بدنه فعال */
+    /* پدینگ‌ها همان قبلی؛ کف صفحه با floor-gap ایمن می‌ماند */
+  }
+
+  .stage{position:relative; width:min(760px,96vw); margin-inline:auto; overflow:visible}
 
   /* Umschlag */
-  .envelope{ position:relative; height:360px; perspective:1200px; display:flex;align-items:center;justify-content:center; }
+  .envelope{ position:relative; height:360px; perspective:1200px; display:flex;align-items:center;justify-content:center; transition:height .35s ease, opacity .35s ease; }
   .env-body{
     position:absolute; inset:0; border-radius:22px; overflow:hidden;
     background:linear-gradient(#fff, #fff5f7);
@@ -148,31 +160,35 @@
   .opened .flap{ transform: rotateX(-185deg); }
   .opened .open-wrap{display:none}
 
-  /* Origami line & stamp cancel */
+  /* وقتی نامه باز است: پاکت چسبان و لطیف در بالا بماند و مزاحم کلیک/اسکرول نشود */
+  body.letter-open .envelope{
+    position:sticky; top:0;
+    height:var(--env-collapsed-h);
+    opacity:.32;
+    pointer-events:none;     /* لمس/اسکرول به متن برسد */
+    backdrop-filter:saturate(120%) blur(0px);
+  }
+
+  /* Origami short line */
   .origami-line{
     position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8;
   }
   .origami-line svg path{ stroke: rgba(247,213,143,.85); }
+
+  /* Post stamp cancellation (gold waves) */
   .stamp-cancel{
     position:absolute; top:24px; left:62px; width:160px; height:70px; transform: rotate(-16deg);
     pointer-events:none; opacity:.66;
   }
   .stamp-cancel svg path{ stroke: rgba(245,198,106,.55); }
 
-  /* Card (اسکرول داخلی) */
+  /* Card */
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
     margin-bottom: calc(var(--floor-gap) * .6);
-
-    /* ارتفاع محدود به ویوپورت برای اسکرول داخلی */
-    max-height: min(85vh, 90dvh);
   }
-  .card.show{
-    display:flex;                /* <— برای اینکه header بالا بماند و body پر شود */
-    flex-direction: column;
-    animation:pop .7s ease;
-  }
+  .card.show{display:block; animation:pop .7s ease}
   @keyframes pop{from{transform:translateY(10px); opacity:0}to{transform:translateY(0); opacity:1}}
 
   .card::before{
@@ -190,13 +206,11 @@
     opacity:.45;
   }
 
+  /* Header + symmetric ribbon chip */
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
     overflow: visible;
-    /* اگر خواستی ثابت بماند، این را آنکامنت کن:
-    position: sticky; top: 0; z-index: 2;
-    */
   }
   .chip{display:inline-block; color:#9c1c38; font-weight:800; font-size:12px}
   .chip.ribbon{
@@ -214,22 +228,13 @@
   .chip.ribbon::before{ left:-10px; }
   .chip.ribbon::after{  right:-10px; }
 
-  .card-body{
-    padding:24px; line-height:1.95; position:relative;
-
-    /* اسکرول داخلی + اسکرول اینرسی iOS */
-    flex: 1 1 auto;
-    min-height: 0;                    /* برای جمع شدن داخل فلکس لازم است */
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;     /* بقاء اسکرول در همین ظرف */
-  }
+  .card-body{ padding:24px; line-height:1.95; position:relative }
   .card-body::after{
     content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
   }
 
-  /* تزئینات */
+  /* Subtle golden corner florals */
   .gilded-corner{
     position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
   }
@@ -339,7 +344,7 @@
   .btn.primary{ background: var(--rose); color:#fff}
 
   .vol-wrap{ display:flex; align-items:center; gap:8px; }
-  .vol-label{ font size:12px; opacity:.75 }
+  .vol-label{ font-size:12px; opacity:.75 }
   input[type="range"]{
     -webkit-appearance:none; appearance:none; height:8px; width:140px; border-radius:999px;
     background: linear-gradient(90deg, #ffe2ea, #ffd0db);
@@ -381,36 +386,26 @@
 
     /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
-    .stage{ display:block !important; visibility:visible !important; }
-    .stage > :not(.card){ display:none !important; }
+    .stage{ display:block !Important; visibility:visible !important; }
+    .stage > :not(.card){ display:none !important; } /* envelope و ... حذف از چاپ */
     .card, .card *{ visibility:visible !important; }
 
     .card{
       display:block !important; position:static !important;
-
-      /* عرض قبل از زوم؛ تا بعد از zoom دقیقاً به ناحیهٔ قابل‌چاپ بخورد */
       width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
-
       margin:0 !important;
       box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
-
-      /* زوم واقعی (Chrome/Edge/Safari) */
       zoom: var(--print-zoom, 1) !important;
       transform: none !important;
       transform-origin: top left !important;
-      max-height: none !important;        /* محدودیت اسکرول داخلی در چاپ برداشته شود */
     }
 
     .card::before, .card::after,
     .gilded-corner, .stamp-cancel, .origami-line,
     .dots, .q-actions, .actions, .music-visual{ display:none !important; }
 
-    .card-body{
-      padding:14mm 16mm !important; box-shadow:none !important;
-      overflow:visible !important;   /* در چاپ اسکرول داخلی را حذف کن */
-      max-height:none !important;
-    }
+    .card-body{ padding:14mm 16mm !important; box-shadow:none !important; }
     .letter{ font-size:18px !important; line-height:1.9 !important; }
     .print-sign{ display:block !important; margin-top:12mm; text-align:right; font-family:cursive; opacity:.9; }
   }
@@ -455,7 +450,7 @@
         <span class="chip ribbon">November, 2025</span>
       </div>
 
-      <div class="card-body" id="cardBody">
+      <div class="card-body">
         <!-- subtle golden florals -->
         <div class="gilded-corner tl" aria-hidden="true">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -553,7 +548,6 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const env = document.getElementById("envelope");
   const openBtn = document.getElementById("openBtn");
   const card = document.getElementById("card");
-  const cardBody = document.getElementById("cardBody");
   const letterEl = document.getElementById("letter");
   const nameEl = document.getElementById("name");
   const musicBtn = document.getElementById("musicBtn");
@@ -605,7 +599,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const prev = text[start-1], next = text[end];
       const isBoundary = !isLetterOrDigit(prev) && !isLetterOrDigit(next);
       if(isBoundary){
-        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); }
+        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start)); }
         const span = document.createElement('span');
         span.className = 'neon-word breathe';
         span.textContent = m[0];
@@ -678,7 +672,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   bgm.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
   volumeEl.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // Open → show card (اسکرول داخلی + قفل‌کردن اسکرول صفحه)
+  // Open → show card (و فعال‌کردن حالت اسکرول کامل + پاکتِ چسبان)
   const typeWriterDelay = 500;
   const envEl = document.getElementById("envelope");
   openBtn.addEventListener("click", async (ev)=>{
@@ -692,25 +686,19 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
     if(sealEl){ sealEl.classList.add('wiggle'); setTimeout(()=> sealEl.classList.remove('wiggle'), 360); }
 
+    // حالت بازشدن
     envEl.classList.add("opened");
+    document.body.classList.add('letter-open');
+    document.documentElement.classList.add('letter-open');
+
     setTimeout(async ()=>{
       card.classList.add("show");
-
-      /* مهم: اسکرول اصلی صفحه را قفل کن؛ فقط .card-body اسکرول شود */
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-
-      /* بدنهٔ کارت را قابل فوکوس کن و به ابتدای نامه برو */
-      cardBody.setAttribute('tabindex','0');
-      cardBody.scrollTop = 0;
-      try { cardBody.focus({preventScroll:true}); } catch(e){}
-
       typeWriter(letterText, letterEl);
       await tryPlay();
     }, typeWriterDelay);
   });
 
-  /* ===== پرینت یک‌صفحه‌ای با زوم خودکار (با توجه به اسکرول داخلی) ===== */
+  /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
   function mmToPx(mm){
     const el=document.createElement('div');
     el.style.height=mm+'mm';
@@ -721,7 +709,6 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     el.remove();
     return px;
   }
-
   function computePrintScale(){
     try{
       // باید با @page برابر باشد:
@@ -731,25 +718,21 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
-      // استایل‌های فعلی را ذخیره کن
-      const prevCardStyle = card.style.cssText;
-      const prevBodyStyle = cardBody.style.cssText;
+      // کارت ممکن است در حالت عادی display:none باشد (قبل از باز کردن)
+      const prevDisplay = getComputedStyle(card).display;
+      const prevWidth = card.style.width;
 
-      // برای اندازه‌گیری، محدودیت‌های اسکرول داخلی را موقتاً بردار
+      // موقتاً برای اندازه‌گیری، نمایش و عرض را تنظیم می‌کنیم
       card.style.display = 'block';
-      card.style.maxHeight = 'none';
       card.style.width = printableWpx + 'px';
-      cardBody.style.maxHeight = 'none';
-      cardBody.style.overflow = 'visible';
 
-      const contentH = card.scrollHeight; // ارتفاع واقعی کل محتوا
-
-      const zoom = Math.min(1, printableHpx / contentH); // بزرگ‌تر از 1 نکن
+      const contentH = card.scrollHeight; // ارتفاع واقعی محتوا
+      const zoom = Math.min(1, printableHpx / contentH); // هرگز >1 بزرگ نکن
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
-      // بازگردانی استایل‌ها
-      card.style.cssText = prevCardStyle;
-      cardBody.style.cssText = prevBodyStyle;
+      // بازگردانی حالت قبلی
+      card.style.width = prevWidth;
+      card.style.display = prevDisplay;
 
       return zoom;
     }catch(e){
@@ -764,14 +747,14 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     setTimeout(()=> window.print(), 30);
   });
 
-  // وقتی کاربر از Ctrl/Cmd+P استفاده کند هم اعمال شود
+  // وقتی کاربر از Ctrl+P استفاده کند هم اعمال شود
   window.addEventListener('beforeprint', computePrintScale);
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
   });
 
   // Replay letter
-  replayBtn.addEventListener("click", ()=>{ cardBody.scrollTop = 0; typeWriter(letterText, letterEl); });
+  replayBtn.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
 
   // Quotes + progress + swipe
   const QUOTES = [
