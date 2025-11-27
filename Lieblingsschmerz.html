@@ -21,7 +21,11 @@
     --halo2h: clamp(320px, 50vh, 760px);
     --champW: clamp(360px, 50vw, 820px);
     --champH: clamp(260px, 38vh, 560px);
+
+    /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
     --floor-gap: clamp(72px, 10vh, 180px);
+
+    /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
     --print-zoom: 1;
   }
 
@@ -30,11 +34,14 @@
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
     color:var(--ink);
     display:flex;align-items:center;justify-content:center;
+    /* پدینگ پایینی را با safe-area + فاصلهٔ اضافه جمع می‌کنیم */
     padding:28px;
     padding-top:    max(28px, env(safe-area-inset-top));
     padding-right:  max(28px, env(safe-area-inset-right));
     padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
     padding-left:   max(28px, env(safe-area-inset-left));
+
+    /* Romantic Rosé + Champagne layered background */
     background:
       radial-gradient(var(--halo1w) var(--halo1h) at 78% 6%,  rgba(255,241,247,.95), transparent 65%),
       radial-gradient(var(--halo2w) var(--halo2h) at 8% 94%,   rgba(255,227,236,.88), transparent 66%),
@@ -162,6 +169,8 @@
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
+
+    /* فاصلهٔ اضافه تا کف صفحه (برای دیده‌شدن کامل قاب طلایی پایین) */
     margin-bottom: calc(var(--floor-gap) * .6);
   }
   .card.show{display:block; animation:pop .7s ease}
@@ -182,6 +191,7 @@
     opacity:.45;
   }
 
+  /* Header + symmetric ribbon chip */
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
@@ -209,6 +219,7 @@
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
   }
 
+  /* Subtle golden corner florals */
   .gilded-corner{
     position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
   }
@@ -257,6 +268,7 @@
   .fade{animation:fade .35s ease}
   @keyframes fade{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:translateY(0)}}
 
+  /* Divider */
   .divider{
     --gap: 14px;
     --thick: 1.5px;
@@ -277,6 +289,7 @@
     box-shadow: 0 0 16px rgba(247,213,143,.25);
   }
 
+  /* Quotes */
   .quotes{ margin-top:18px; padding-top:10px; border-top:none; }
   .q-title{font-weight:800; margin:0 0 8px}
   .q-box{
@@ -292,6 +305,8 @@
   .dot.active{ background:var(--dot-active); border-color:var(--dot-active); transform:scale(1.05); }
 
   .q-actions{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+
+  /* progress */
   .q-progress{ height:2px; background:rgba(249,230,182,.35); border-radius:999px; overflow:hidden; margin:6px 12px 0; }
   .q-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold2)); }
   .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
@@ -312,6 +327,7 @@
   .btn:hover{ box-shadow:0 10px 22px rgba(255,75,110,.28), 0 0 0 1px rgba(255,255,255,.6) inset; }
   .btn:active{ transform: translateY(1px); }
   .btn.primary{ background: var(--rose); color:#fff}
+  .btn[disabled]{ opacity:.6; cursor:not-allowed; filter:grayscale(.15); }
 
   .vol-wrap{ display:flex; align-items:center; gap:8px; }
   .vol-label{ font-size:12px; opacity:.75 }
@@ -345,30 +361,41 @@
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
 
-  /* PRINT */
+  /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
   @media print{
     @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
+
     html,body{
       background:#fff !important; height:auto !important; overflow:visible !important;
       -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
     }
+
+    /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
-    .stage > :not(.card){ display:none !important; }
+    .stage > :not(.card){ display:none !important; } /* پاک‌کردن envelope و ... از چیدمان */
     .card, .card *{ visibility:visible !important; }
+
     .card{
       display:block !important; position:static !important;
+
+      /* عرض قبل از زوم؛ تا بعد از zoom دقیقاً به ناحیهٔ قابل‌چاپ بخورد */
       width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
+
       margin:0 !important;
       box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
+
+      /* زوم واقعی (Chrome/Edge/Safari) */
       zoom: var(--print-zoom, 1) !important;
       transform: none !important;
       transform-origin: top left !important;
     }
+
     .card::before, .card::after,
     .gilded-corner, .stamp-cancel, .origami-line,
     .dots, .q-actions, .actions, .music-visual{ display:none !important; }
+
     .card-body{ padding:14mm 16mm !important; box-shadow:none !important; }
     .letter{ font-size:18px !important; line-height:1.9 !important; }
     .print-sign{ display:block !important; margin-top:12mm; text-align:right; font-family:cursive; opacity:.9; }
@@ -386,6 +413,7 @@
       <div class="seal" id="seal" aria-hidden="true">R</div>
       <div class="stamp" aria-hidden="true">💘</div>
 
+      <!-- post cancellation (gold) -->
       <div class="stamp-cancel" aria-hidden="true">
         <svg viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 10 C45 0, 85 20, 130 10 S200 20, 220 10" stroke-width="2" fill="none"/>
@@ -394,6 +422,7 @@
         </svg>
       </div>
 
+      <!-- short origami line -->
       <div class="origami-line" aria-hidden="true">
         <svg viewBox="0 0 120 22" xmlns="http://www.w3.org/2000/svg" fill="none">
           <path d="M6 16 L34 6 L62 16 L90 6 L114 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -413,6 +442,7 @@
       </div>
 
       <div class="card-body">
+        <!-- subtle golden florals -->
         <div class="gilded-corner tl" aria-hidden="true">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="24" cy="24" r="6"/>
@@ -438,11 +468,13 @@
         <div class="muted">Mein Lieblingsschmerz,</div>
         <div class="letter" id="letter">❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</div>
 
+        <!-- Divider #1 -->
         <div class="divider" aria-hidden="true"></div>
 
         <button class="btn ps-toggle" id="psToggle" aria-expanded="false">Noch eins:</button>
         <div class="ps" id="psText">Manchmal reichen Wörter nicht aber dieser Brief versucht es trotzdem. 💗</div>
 
+        <!-- Divider #2 -->
         <div class="divider" aria-hidden="true"></div>
 
         <section class="quotes" id="quotes" role="region" aria-label="Zitat-Karussell">
@@ -504,8 +536,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const NEON_WORDS = ["Roya","to","donyam"];
 
   // Elements
-  const env = document.getElementById("envelope");
-  const envEl = document.getElementById("envelope"); // برای سازگاری با کدهای قبلی
+  const envEl = document.getElementById("envelope"); // مهم: envEl تعریف شود
   const openBtn = document.getElementById("openBtn");
   const card = document.getElementById("card");
   const letterEl = document.getElementById("letter");
@@ -531,16 +562,35 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const quotesSection = document.getElementById("quotes");
   const qProgress = document.getElementById("qProgress");
 
-  // Typing + Neon highlight
-  function typeWriter(text, el, i=0){
-    if(i === 0){ el.textContent = ""; }
-    if(i < text.length){
-      el.textContent = text.slice(0, i+1);
-      setTimeout(()=>typeWriter(text, el, i+1), 24);
-    }else{
-      highlightLetter();
+  // ===== Locks & helpers =====
+  const Locks = { typing:false, opening:false, audio:false, quote:false };
+  let typeRunId = 0;
+  const typeTimers = new Set();
+  const TYPE_DELAY = 24;
+  const QUOTE_FADE_MS = 380;
+
+  function clearTypeTimers(){
+    for(const t of typeTimers) clearTimeout(t);
+    typeTimers.clear();
+  }
+  function setBusy(el, busy){
+    if(!el) return;
+    if(busy){ el.setAttribute('disabled',''); el.setAttribute('aria-busy','true'); }
+    else { el.removeAttribute('disabled'); el.setAttribute('aria-busy','false'); }
+  }
+  function throttle(fn, wait){
+    let last=0, timer=null;
+    return function(...args){
+      const now=Date.now(), rem=wait-(now-last);
+      if(rem<=0){ last=now; fn.apply(this,args); }
+      else{ clearTimeout(timer); timer=setTimeout(()=>{ last=Date.now(); fn.apply(this,args); }, rem); }
     }
   }
+  function lockQuoteBtns(b){
+    setBusy(prevBtn,b); setBusy(nextBtn,b); setBusy(randBtn,b); setBusy(autoBtn,b);
+  }
+
+  // Typing + Neon highlight (با امکان Abort و قفل)
   function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
   function buildRegex(words){
     if(!words || !words.length) return null;
@@ -548,7 +598,6 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     return new RegExp(`(${pattern})`,'giu');
   }
   function isLetterOrDigit(ch){ return ch && /\p{L}|\p{N}/u.test(ch); }
-
   function highlightNodeText(node, re){
     const text = node.nodeValue;
     if(!text || !re.test(text)) return;
@@ -586,136 +635,128 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     if(!re) return; walkAndHighlight(letterEl, re);
   }
 
+  function typeWriter(text, el, i=0, runId=null){
+    // شروع جدید: abort قبلی + قفل دکمه‌ها
+    if(runId===null){
+      typeRunId++;
+      runId = typeRunId;
+      clearTypeTimers();
+      Locks.typing = true;
+      setBusy(replayBtn, true);
+      setBusy(pdfBtn, true);
+      el.textContent = "";
+    }
+    // اگر بین راه replay شد، این اجرا قطع شود
+    if(runId !== typeRunId) return;
+
+    if(i < text.length){
+      el.textContent = text.slice(0, i+1);
+      const tid = setTimeout(()=> typeWriter(text, el, i+1, runId), TYPE_DELAY);
+      typeTimers.add(tid);
+    }else{
+      highlightLetter();
+      Locks.typing = false;
+      setBusy(replayBtn, false);
+      setBusy(pdfBtn, false);
+    }
+  }
+
   // PS toggle
   psToggle?.addEventListener('click', ()=>{
     psText.classList.toggle('show');
     psToggle.setAttribute('aria-expanded', psText.classList.contains('show') ? 'true' : 'false');
   });
 
-  // Name double-click
+  // Name double-click (optional flair)
   nameEl?.addEventListener('dblclick', ()=>{
     nameEl.classList.add('ringflash');
     setTimeout(()=> nameEl.classList.remove('ringflash'), 450);
   });
 
-  // ---- Helpers: iOS / PWA detection ----
-  const isIOS = () =>
-    /iP(ad|hone|od)/i.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-  const isStandalone = () =>
-    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-    (window.navigator && window.navigator.standalone === true);
-
   // Music
-  let isPlaying = false;
-  let didFirstFade = false;
   function vizOn(){ musicViz?.classList.add("on"); }
   function vizOff(){ musicViz?.classList.remove("on"); }
-  function fadeInTo(targetVol= (volumeEl?.value||70)/100, ms=1000){
-    const steps = Math.max(1, Math.floor(ms/50)); let k=0; const start=0; bgm.volume=0;
-    const it = setInterval(()=>{
-      k++; bgm.volume = start + (targetVol - start) * (k/steps);
-      if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
-    },50);
-  }
+
   async function tryPlay(){
+    if(Locks.audio) return;
+    Locks.audio = true;
     try{
       if (fxOpen && fxOpen.src && !fxOpen.error) {
-        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.05; fxOpen.volume=.35; fxOpen.play(); }catch(e){}
+        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; await fxOpen.play(); }catch(e){}
       }
-      await bgm.play(); isPlaying = true;
-      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(); }
-      else{ bgm.volume = (volumeEl?.value||70) / 100; }
-      musicBtn.textContent = "Melodie 🎵"; vizOn();
+      await bgm.play();
+      bgm.volume = (volumeEl?.value||70)/100;
+      musicBtn && (musicBtn.textContent = "Melodie 🎵");
+      vizOn();
     }catch(e){
       console.warn("Audio error:", e);
-      isPlaying = false; vizOff();
+      vizOff();
+    }finally{
+      Locks.audio = false;
     }
   }
-  musicBtn?.addEventListener("click", async ()=>{
-    if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
-    if(isPlaying){ bgm.pause(); isPlaying=false; musicBtn.textContent="Melodie 🎵"; vizOff(); }
-    else{ await tryPlay(); }
-  });
-  bgm?.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
-  bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
-  volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // ---- Open → show card  (iOS/PWA-safe audio) ----
+  musicBtn?.addEventListener("click", async ()=>{
+    if(Locks.audio) return;
+    if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
+    if(!bgm.paused){
+      Locks.audio = true;
+      try{ bgm.pause(); vizOff(); musicBtn.textContent="Melodie 🎵"; } finally { Locks.audio=false; }
+    }else{
+      await tryPlay();
+    }
+  });
+
+  volumeEl?.addEventListener("input", throttle(()=>{ bgm.volume = volumeEl.value / 100; }, 50));
+
+  // Open → show card  (با قفلِ opening و پخش صدا در همان ژست)
   openBtn.addEventListener("click", async (ev)=>{
+    if(Locks.opening) return;
+    Locks.opening = true;
+    setBusy(openBtn, true);
+
     // Ripple
     const r = document.createElement('span');
     r.className = 'ripple';
     const rect = openBtn.getBoundingClientRect();
     const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
     const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
-    r.style.left = x + 'px'; 
-    r.style.top  = y + 'px';
-    openBtn.appendChild(r); 
-    setTimeout(()=> r.remove(), 650);
+    r.style.left = x + 'px'; r.style.top  = y + 'px';
+    openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
 
-    // Seal wiggle
+    // مهر
     if (sealEl){
       sealEl.classList.add('wiggle');
       setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
     }
 
-    const targetVol = (volumeEl?.value || 70) / 100;
-    const rampVolume = (to=targetVol, ms=700)=>{
-      const steps = Math.max(1, Math.floor(ms/50));
-      let k=0;
-      clearInterval(rampVolume.__it);
-      rampVolume.__it = setInterval(()=>{
-        k++; bgm.volume = Math.min(to, (k/steps)*to);
-        if(k>=steps){ clearInterval(rampVolume.__it); bgm.volume = to; }
-      },50);
-    };
-
-    const inIOSPWA = isIOS() && isStandalone();
-
+    // پخش صدا دقیقاً در همان ژست
     try{
-      // paper SFX
-      if (fxOpen && fxOpen.src && !fxOpen.error) {
-        try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.05; fxOpen.volume=.35; fxOpen.play(); }catch{}
-      }
-
-      if (inIOSPWA){
-        try { bgm.pause(); } catch {}
-        bgm.muted  = true;
+      if (fxOpen) { fxOpen.currentTime = 0; fxOpen.play().catch(()=>{}); }
+      if (bgm.paused){
+        const target = (volumeEl?.value||70) / 100;
         bgm.volume = 0;
-        bgm.currentTime = 0;
-        try { bgm.load(); } catch {}
-        await bgm.play();            // play داخل ژست کاربر
-        bgm.muted = false;           // بعد از resolve
-        rampVolume(targetVol, 700);  // فیداین
-
-        isPlaying = true;
-        musicBtn.textContent = "Melodie 🎵";
-        vizOn();
-
-        // یک تلاش ایمنی
-        setTimeout(async ()=>{
-          if (bgm.paused || bgm.volume === 0){
-            try{
-              await bgm.play();
-              bgm.muted = false;
-              rampVolume(targetVol, 700);
-            }catch{}
-          }
-        }, 450);
-      } else {
-        await tryPlay();
+        try{
+          const p = bgm.play();
+          if (p && p.then) await p;
+          vizOn();
+          // فیداین کوتاه
+          let k=0, steps=16;
+          const it = setInterval(()=>{
+            k++; bgm.volume = Math.min(target, (k/steps)*target);
+            if(k>=steps){ clearInterval(it); bgm.volume = target; }
+          }, 50);
+        }catch(e){}
       }
-    }catch(e){
-      console.warn('Audio start error:', e);
-    }
+    }catch(e){}
 
-    // Show letter
+    // نمایش کارت + تایپ
     envEl.classList.add("opened");
     setTimeout(()=>{
       card.classList.add("show");
       typeWriter(letterText, letterEl);
+      Locks.opening = false;
+      setBusy(openBtn, false); // (بعد از باز شدن مخفی می‌شود)
     }, 500);
   });
 
@@ -730,7 +771,6 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     el.remove();
     return px;
   }
-
   function computePrintScale(){
     try{
       const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
@@ -739,6 +779,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
+      // برای اندازه‌گیری، موقتاً کارت را نشان بده
       const prevDisplay = getComputedStyle(card).display;
       const prevWidth = card.style.width;
 
@@ -746,10 +787,10 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       card.style.width = printableWpx + 'px';
 
       const contentH = card.scrollHeight;
-
-      const zoom = Math.min(1, printableHpx / contentH);
+      const zoom = Math.min(1, printableHpx / contentH); // هرگز بزرگ‌نمایی >1 نکن
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
+      // بازگردانی
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
 
@@ -760,20 +801,32 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     }
   }
 
+  // دکمهٔ PDF
   pdfBtn?.addEventListener("click", ()=>{
+    // اگر وسط تایپ بود، قطع شود تا چاپ دقیق باشد
+    clearTypeTimers(); Locks.typing=false;
+    setBusy(replayBtn,false); setBusy(pdfBtn,false);
     computePrintScale();
     setTimeout(()=> window.print(), 30);
   });
 
-  window.addEventListener('beforeprint', computePrintScale);
+  // Ctrl+P
+  window.addEventListener('beforeprint', ()=>{
+    clearTypeTimers(); Locks.typing=false;
+    document.documentElement.style.removeProperty('--print-zoom');
+    computePrintScale();
+  });
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
   });
 
-  // Replay letter
-  replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
+  // Replay letter (با قفل)
+  replayBtn?.addEventListener("click", ()=>{
+    if(Locks.typing) return; // یا می‌تونی نادیده بگیری
+    typeWriter(letterText, letterEl);
+  });
 
-  // Quotes + progress + swipe
+  // Quotes + progress + swipe (با قفلِ fade)
   const QUOTES = [
     {text:"Du bist das Kapitel, das ich niemals beenden möchte.", author:""},
     {text:"Jeden Morgen, wenn ich aufwache, bist du mein erster Gedanke.", author:""},
@@ -819,15 +872,15 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Mit dir schenkt mir sogar ein kurzer Blick tausend verliebte Gefühle.", author:""},
     {text:"Du bist wie ein geheimnisvolles Buch – jede Seite von dir trägt ein neues Gefühl in sich.", author:""},
     {text:"Mit dir zusammen zu sein bedeutet، dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
-    {text:"Du bist wie ein romantischer Film, von dem man nie müde wird, ihn wieder und wieder anzuschauen.", author:""},
+    {text:"Du bist wie ein romantischer Film، von dem man nie müde wird، ihn wieder und wieder anzuschauen.", author:""},
     {text:"Du bist illegal hübsch; ich glaub, du solltest bestraft werden.", author:""},
-    {text:"Du bist genau derjenige, der mein Gehirn durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
-    {text:"„Wenn ich nur eine Minute von dir weg bin، fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
+    {text:"Du bist genau derjenige, der mein Gehirن durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
+    {text:"„Wenn ich nur eine Minute von dir weg bin, fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
     {text:"Du bist wie mein Morgenkaffee – selbst wenn du bitter wärst, ohne dich könnte mein Tag gar nicht beginnen.", author:""},
     {text:"Du bist diejenige, wegen der ich den halben Tag nachdenke und die andere Hälfte lache.", author:""},
     {text:"Wenn ich könnte, würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
     {text:"Roya, du bist wie starkes WLAN – wenn du nicht da bist, fühlt sich die ganze Welt langsam und langweilig an.", author:""},
-    {text:"„Jedes Mal, wenn du mir schreibst, fühlt es sich an, als würde eine Kugel voller Glück mich treffen.“", author:""},
+    {text:"„Jedes Mal, wenn du mir schreibst، fühlt es sich an, als würde eine Kugel voller Glück mich treffen.“", author:""},
     {text:"Ich liebe dich – nicht wie die anderen, sondern wie den ersten Herzschlag, der merkt, dass er lebt, nur weil es dich gibt.", author:""}
   ];
   let idx = 0, autoTimer = null;
@@ -854,6 +907,8 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     const bar = qProgress.querySelector('.bar'); if(bar) bar.style.width='0%';
   }
   function showQuote(i){
+    if(Locks.quote) return;
+    Locks.quote = true; lockQuoteBtns(true);
     idx = (i + QUOTES.length) % QUOTES.length;
     quoteText.classList.remove("fade"); void quoteText.offsetWidth;
     quoteText.textContent = "„" + QUOTES[idx].text + "“";
@@ -861,10 +916,12 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     quoteAuthor.textContent = QUOTES[idx].author ? "— " + QUOTES[idx].author : "";
     [...dotsWrap.children].forEach((d,k)=> d.classList.toggle("active", k===idx));
     if(autoTimer) restartProgress();
+    setTimeout(()=>{ Locks.quote=false; lockQuoteBtns(false); }, QUOTE_FADE_MS);
   }
   function next(){ showQuote(idx+1); }
   function prev(){ showQuote(idx-1); }
   function randomQuote(){
+    if(Locks.quote) return;
     let j = Math.floor(Math.random()*QUOTES.length);
     if(j===idx) j = (j+1)%QUOTES.length;
     showQuote(j);
@@ -909,7 +966,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     }
   }, {passive:true});
 
-  // Seal wiggle
+  // Seal wiggle on pointerdown
   sealEl?.addEventListener('pointerdown', ()=>{
     sealEl.classList.add('wiggle');
     setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
@@ -918,34 +975,6 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   // Init
   renderDots();
   showQuote(0);
-
-  // ---- iOS PWA: resume after background (mute/unmute fix) ----
-  document.addEventListener('visibilitychange', ()=>{
-    if (!document.hidden && isIOS() && isStandalone()){
-      if (!bgm.paused && (bgm.muted || bgm.volume === 0)){
-        try{
-          bgm.muted = false;
-          if (bgm.paused) bgm.play().catch(()=>{});
-          (function ramp(to=((volumeEl?.value||70)/100), ms=600){
-            const steps = Math.max(1, Math.floor(ms/50));
-            let k=0; clearInterval(ramp.__it);
-            ramp.__it = setInterval(()=>{
-              k++; bgm.volume = Math.min(to, (k/steps)*to);
-              if(k>=steps){ clearInterval(ramp.__it); bgm.volume = to; }
-            },50);
-          })();
-        }catch{}
-      }
-    }
-  });
-
-  window.addEventListener('pageshow', ()=>{
-    if (isIOS() && isStandalone()){
-      if (!bgm.paused && (bgm.muted || bgm.volume === 0)){
-        try{ bgm.muted = false; bgm.play().then(()=>{ bgm.volume = (volumeEl?.value||70)/100; }).catch(()=>{}); }catch{}
-      }
-    }
-  });
 </script>
 </body>
 </html>
