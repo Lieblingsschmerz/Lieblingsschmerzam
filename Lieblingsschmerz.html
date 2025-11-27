@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>💌Mein Lieblingsschmerz💌</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -20,7 +21,11 @@
     --halo2h: clamp(320px, 50vh, 760px);
     --champW: clamp(360px, 50vw, 820px);
     --champH: clamp(260px, 38vh, 560px);
+
+    /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
     --floor-gap: clamp(72px, 10vh, 180px);
+
+    /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
     --print-zoom: 1;
   }
 
@@ -29,11 +34,14 @@
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
     color:var(--ink);
     display:flex;align-items:center;justify-content:center;
+    /* پدینگ پایینی را با safe-area + فاصلهٔ اضافه جمع می‌کنیم */
     padding:28px;
     padding-top:    max(28px, env(safe-area-inset-top));
     padding-right:  max(28px, env(safe-area-inset-right));
     padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
     padding-left:   max(28px, env(safe-area-inset-left));
+
+    /* Romantic Rosé + Champagne layered background */
     background:
       radial-gradient(var(--halo1w) var(--halo1h) at 78% 6%,  rgba(255,241,247,.95), transparent 65%),
       radial-gradient(var(--halo2w) var(--halo2h) at 8% 94%,   rgba(255,227,236,.88), transparent 66%),
@@ -85,6 +93,7 @@
     opacity:.6;
   }
 
+  /* Wax seal + wiggle */
   .seal{
     position:absolute; left:50%; top:42%;
     transform:translate(-50%,-50%); width:66px; height:66px; border-radius:50%;
@@ -107,6 +116,7 @@
   }
   .seal.wiggle{ animation: wiggle .35s ease; }
 
+  /* Öffnen button + ripple */
   .open-wrap{ position:absolute; bottom:-26px; left:0; right:0; display:flex; justify-content:center; }
   .open-btn{
     background:linear-gradient(180deg,#ff6a87,#ff4b6e);
@@ -142,11 +152,13 @@
   .opened .flap{ transform: rotateX(-185deg); }
   .opened .open-wrap{display:none}
 
+  /* Origami short line */
   .origami-line{
     position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8;
   }
   .origami-line svg path{ stroke: rgba(247,213,143,.85); }
 
+  /* Post stamp cancellation (gold waves) */
   .stamp-cancel{
     position:absolute; top:24px; left:62px; width:160px; height:70px; transform: rotate(-16deg);
     pointer-events:none; opacity:.66;
@@ -157,6 +169,8 @@
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
+
+    /* فاصلهٔ اضافه تا کف صفحه (برای دیده‌شدن کامل قاب طلایی پایین) */
     margin-bottom: calc(var(--floor-gap) * .6);
   }
   .card.show{display:block; animation:pop .7s ease}
@@ -177,6 +191,7 @@
     opacity:.45;
   }
 
+  /* Header + symmetric ribbon chip */
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
@@ -204,6 +219,7 @@
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
   }
 
+  /* Subtle golden corner florals */
   .gilded-corner{
     position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
   }
@@ -252,6 +268,7 @@
   .fade{animation:fade .35s ease}
   @keyframes fade{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:translateY(0)}}
 
+  /* Divider */
   .divider{
     --gap: 14px;
     --thick: 1.5px;
@@ -272,6 +289,7 @@
     box-shadow: 0 0 16px rgba(247,213,143,.25);
   }
 
+  /* Quotes */
   .quotes{ margin-top:18px; padding-top:10px; border-top:none; }
   .q-title{font-weight:800; margin:0 0 8px}
   .q-box{
@@ -287,6 +305,8 @@
   .dot.active{ background:var(--dot-active); border-color:var(--dot-active); transform:scale(1.05); }
 
   .q-actions{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+
+  /* progress */
   .q-progress{ height:2px; background:rgba(249,230,182,.35); border-radius:999px; overflow:hidden; margin:6px 12px 0; }
   .q-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold2)); }
   .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
@@ -340,7 +360,7 @@
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
 
-  /* PRINT */
+  /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
   @media print{
     @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
 
@@ -349,17 +369,23 @@
       -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
     }
 
+    /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
-    .stage > :not(.card){ display:none !important; }
+    .stage > :not(.card){ display:none !important; } /* پاک‌کردن envelope و ... از چیدمان */
     .card, .card *{ visibility:visible !important; }
 
     .card{
       display:block !important; position:static !important;
+
+      /* عرض قبل از زوم؛ تا بعد از zoom دقیقاً به ناحیهٔ قابل‌چاپ بخورد */
       width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
+
       margin:0 !important;
       box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
+
+      /* زوم واقعی (Chrome/Edge/Safari) */
       zoom: var(--print-zoom, 1) !important;
       transform: none !important;
       transform-origin: top left !important;
@@ -386,6 +412,7 @@
       <div class="seal" id="seal" aria-hidden="true">R</div>
       <div class="stamp" aria-hidden="true">💘</div>
 
+      <!-- post cancellation (gold) -->
       <div class="stamp-cancel" aria-hidden="true">
         <svg viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 10 C45 0, 85 20, 130 10 S200 20, 220 10" stroke-width="2" fill="none"/>
@@ -394,6 +421,7 @@
         </svg>
       </div>
 
+      <!-- short origami line -->
       <div class="origami-line" aria-hidden="true">
         <svg viewBox="0 0 120 22" xmlns="http://www.w3.org/2000/svg" fill="none">
           <path d="M6 16 L34 6 L62 16 L90 6 L114 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -413,6 +441,7 @@
       </div>
 
       <div class="card-body">
+        <!-- subtle golden florals -->
         <div class="gilded-corner tl" aria-hidden="true">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="24" cy="24" r="6"/>
@@ -438,11 +467,13 @@
         <div class="muted">Mein Lieblingsschmerz,</div>
         <div class="letter" id="letter">❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</div>
 
+        <!-- Divider #1 -->
         <div class="divider" aria-hidden="true"></div>
 
         <button class="btn ps-toggle" id="psToggle" aria-expanded="false">Noch eins:</button>
         <div class="ps" id="psText">Manchmal reichen Wörter nicht aber dieser Brief versucht es trotzdem. 💗</div>
 
+        <!-- Divider #2 -->
         <div class="divider" aria-hidden="true"></div>
 
         <section class="quotes" id="quotes" role="region" aria-label="Zitat-Karussell">
@@ -504,31 +535,31 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const NEON_WORDS = ["Roya","to","donyam"];
 
   // Elements
-  const env = document.getElementById("envelope");
-  const openBtn = document.getElementById("openBtn");
-  const card = document.getElementById("card");
-  const letterEl = document.getElementById("letter");
-  const nameEl = document.getElementById("name");
-  const musicBtn = document.getElementById("musicBtn");
-  const volumeEl = document.getElementById("volume");
-  const bgm = document.getElementById("bgm");
-  const fxOpen = document.getElementById("fxOpen");
-  const musicViz = document.getElementById("musicViz");
-  const psToggle = document.getElementById("psToggle");
-  const psText = document.getElementById("psText");
-  const sealEl = document.getElementById("seal");
+  const envEl     = document.getElementById("envelope");
+  const openBtn   = document.getElementById("openBtn");
+  const card      = document.getElementById("card");
+  const letterEl  = document.getElementById("letter");
+  const nameEl    = document.getElementById("name");
+  const musicBtn  = document.getElementById("musicBtn");
+  const volumeEl  = document.getElementById("volume");
+  const bgm       = document.getElementById("bgm");
+  const fxOpen    = document.getElementById("fxOpen");
+  const musicViz  = document.getElementById("musicViz");
+  const psToggle  = document.getElementById("psToggle");
+  const psText    = document.getElementById("psText");
+  const sealEl    = document.getElementById("seal");
 
-  const quoteText = document.getElementById("quoteText");
+  const quoteText   = document.getElementById("quoteText");
   const quoteAuthor = document.getElementById("quoteAuthor");
-  const dotsWrap = document.getElementById("dots");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const randBtn = document.getElementById("randBtn");
-  const autoBtn = document.getElementById("autoBtn");
-  const replayBtn = document.getElementById("replay");
-  const pdfBtn = document.getElementById("pdf");
+  const dotsWrap    = document.getElementById("dots");
+  const prevBtn     = document.getElementById("prevBtn");
+  const nextBtn     = document.getElementById("nextBtn");
+  const randBtn     = document.getElementById("randBtn");
+  const autoBtn     = document.getElementById("autoBtn");
+  const replayBtn   = document.getElementById("replay");
+  const pdfBtn      = document.getElementById("pdf");
   const quotesSection = document.getElementById("quotes");
-  const qProgress = document.getElementById("qProgress");
+  const qProgress   = document.getElementById("qProgress");
 
   // Typing + Neon highlight
   function typeWriter(text, el, i=0){
@@ -591,7 +622,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     psToggle.setAttribute('aria-expanded', psText.classList.contains('show') ? 'true' : 'false');
   });
 
-  // Name double-click
+  // Name double-click (optional flair)
   nameEl?.addEventListener('dblclick', ()=>{
     nameEl.classList.add('ringflash');
     setTimeout(()=> nameEl.classList.remove('ringflash'), 450);
@@ -632,7 +663,35 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // Open → show card  (fix: استفاده از env به‌جای envEl)
+  /* ---- iOS / PWA Audio Unlock ---- */
+  let audioUnlocked = false;
+  let AC = null;
+
+  async function unlockAudio(){
+    if (audioUnlocked) return;
+    try{
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      if (AC.state === 'suspended') await AC.resume();
+      // پالس سکوت برای آزاد کردن زنجیره صوتی iOS
+      const buf = AC.createBuffer(1, 1, 22050);
+      const src = AC.createBufferSource();
+      src.buffer = buf;
+      src.connect(AC.destination);
+      src.start(0);
+      audioUnlocked = true;
+    }catch(e){}
+  }
+
+  // وقتی از BFCache/Standalone برمی‌گردیم، صدا را ریست کن
+  window.addEventListener('pageshow', ()=>{
+    try{ bgm.pause(); }catch(_){}
+    isPlaying = false;
+    didFirstFade = false;
+    audioUnlocked = false;
+    try{ bgm.currentTime = 0; }catch(_){}
+  });
+
+  // Open → show card  (پخش مطمئن داخل همان ژست کاربر)
   openBtn.addEventListener("click", async (ev)=>{
     // Ripple
     const r = document.createElement('span');
@@ -645,42 +704,52 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     openBtn.appendChild(r);
     setTimeout(()=> r.remove(), 650);
 
-    // مهر
+    // مهر تکان
     if (sealEl){
       sealEl.classList.add('wiggle');
       setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
     }
 
-    // پخش صدا داخل ژست کاربر (iOS/PWA-friendly)
+    // آزاد کردن زنجیره صوتی + پخش افکت کاغذ و موسیقی
     try{
-      if (fxOpen) {
-        fxOpen.currentTime = 0;
-        fxOpen.play().catch(()=>{});
-      }
+      await unlockAudio();
+
+      if (fxOpen) { fxOpen.currentTime = 0; fxOpen.play().catch(()=>{}); }
 
       if (bgm.paused){
         const target = (volumeEl?.value ?? 70) / 100;
         bgm.volume = 0;
-
-        const p = bgm.play();
-        if (p && p.then) { await p; }
-
+        try{ bgm.load(); }catch(_){}
+        try{
+          await bgm.play();
+        }catch(err){
+          // تلاش مجدد با bust cache (برای PWA iOS)
+          const base = (bgm.currentSrc || bgm.src || '').replace(/[?#].*$/,'');
+          if (base){
+            bgm.src = base + '?t=' + Date.now();
+            bgm.load();
+            await bgm.play();
+          }else{
+            throw err;
+          }
+        }
         isPlaying = true;
         musicBtn.textContent = "Melodie 🎵";
         vizOn();
-
-        // Fade-in
+        // فیداین
         let k = 0, steps = 16;
         const it = setInterval(()=>{
-          k++;
-          bgm.volume = Math.min(target, (k/steps)*target);
+          k++; bgm.volume = Math.min(target, (k/steps)*target);
           if(k>=steps){ clearInterval(it); bgm.volume = target; }
         }, 50);
       }
-    }catch(e){ /* سکوت امن */ }
+    }catch(e){
+      // مشکلی نبود؛ فقط ادامه بدهیم
+      console.warn('unlock/play error:', e);
+    }
 
-    // پاکت باز و نامه نشان داده شود
-    env.classList.add("opened");     // ← کلیدِ فیکس
+    // باز کردن پاکت و نمایش نامه
+    envEl.classList.add("opened");
     setTimeout(()=>{
       card.classList.add("show");
       typeWriter(letterText, letterEl);
@@ -701,11 +770,14 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   function computePrintScale(){
     try{
+      // باید با @page برابر باشد:
       const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
       const PAGE_W=210, PAGE_H=297;              // A4 mm
+
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
+      // برای اندازه‌گیری، موقتاً کارت را نشان بده
       const prevDisplay = getComputedStyle(card).display;
       const prevWidth = card.style.width;
 
@@ -713,9 +785,11 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       card.style.width = printableWpx + 'px';
 
       const contentH = card.scrollHeight;
-      const zoom = Math.min(1, printableHpx / contentH);
+
+      const zoom = Math.min(1, printableHpx / contentH); // هرگز بزرگ‌نمایی >1 نکن
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
+      // بازگردانی
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
 
@@ -726,11 +800,13 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     }
   }
 
-  // PDF/Print
+  // دکمهٔ PDF
   pdfBtn?.addEventListener("click", ()=>{
     computePrintScale();
     setTimeout(()=> window.print(), 30);
   });
+
+  // Ctrl+P
   window.addEventListener('beforeprint', computePrintScale);
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
