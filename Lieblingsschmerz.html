@@ -665,30 +665,66 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
   // Open → show card  (بدون بازتعریف متغیّرها)
-  const typeWriterDelay = 500;
-  openBtn?.addEventListener("click", async (ev)=>{
-    // Ripple
-    const r = document.createElement('span');
-    r.className = 'ripple';
-    const rect = openBtn.getBoundingClientRect();
-    const x = (ev.clientX || (rect.left+rect.width/2)) - rect.left;
-    const y = (ev.clientY || (rect.top+rect.height/2)) - rect.top;
-    r.style.left = x + 'px'; r.style.top = y + 'px';
-    openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
+  openBtn.addEventListener("click", async (ev)=>{
+  // Ripple مثل قبل
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = openBtn.getBoundingClientRect();
+  const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
+  const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
+  r.style.left = x + 'px'; 
+  r.style.top  = y + 'px';
+  openBtn.appendChild(r); 
+  setTimeout(()=> r.remove(), 650);
 
-    // Seal wiggle
-    if(sealEl){ sealEl.classList.add('wiggle'); setTimeout(()=> sealEl.classList.remove('wiggle'), 360); }
+  // مهر تکان بخورد (اختیاری مثل قبل)
+  if (sealEl){
+    sealEl.classList.add('wiggle');
+    setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
+  }
 
-    // Open envelope
-    env.classList.add("opened");
-    setTimeout(async ()=>{
-      card.classList.add("show");
-      // اسکرول نرم تا ابتدای کارت (مخصوص موبایل)
-      setTimeout(()=>{ card.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
-      typeWriter(letterText, letterEl);
-      await tryPlay();
-    }, typeWriterDelay);
-  });
+  // --- مهم: پخش صدا در همان تَپ کاربر (سازگار با iOS/PWA) ---
+  try{
+    if (fxOpen) {
+      fxOpen.currentTime = 0;
+      fxOpen.play().catch(()=>{});
+    }
+
+    if (bgm.paused){
+      const target = volumeEl.value / 100;
+      bgm.volume = 0;
+
+      // play دقیقا در ژست کاربر
+      const p = bgm.play();
+      if (p && p.then) { 
+        // منتظر می‌مانیم ولی همچنان داخل هندلر کلیک هستیم
+        await p; 
+      }
+
+      isPlaying = true;
+      musicBtn.textContent = "Melodie 🎵";
+      vizOn();
+
+      // فیداین ملایم
+      let k = 0, steps = 16;
+      const it = setInterval(()=>{
+        k++; 
+        bgm.volume = Math.min(target, (k/steps)*target);
+        if(k>=steps){ clearInterval(it); bgm.volume = target; }
+      }, 50);
+    }
+  }catch(e){
+    // اگر iOS اجازه نداد، چیزی نمایش ندهیم
+  }
+
+  // باز شدن پاکت و نمایش نامه
+  envEl.classList.add("opened");
+  setTimeout(()=>{
+    card.classList.add("show");
+    typeWriter(letterText, letterEl);
+  }, 500);
+});
+
 
   /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
   function mmToPx(mm){
@@ -897,4 +933,5 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 </script>
 </body>
 </html>
+
 
