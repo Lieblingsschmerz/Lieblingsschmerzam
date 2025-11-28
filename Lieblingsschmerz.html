@@ -52,7 +52,7 @@
       radial-gradient(calc(var(--champW)*0.8) calc(var(--champH)*0.8) at -6% 104%, rgba(245,198,106,.18), transparent 62%),
       radial-gradient(calc(var(--champW)*1.1) calc(var(--champH)*0.9) at 50% -8%,  rgba(247,213,143,.12), transparent 65%),
       #fffaf6;
-    background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
+    background-attachment: fixed, fixed, fixed, fixed، fixed, fixed;
     position:relative;
   }
 
@@ -179,8 +179,6 @@
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
-
-    /* برای دیده‌شدن کامل قاب طلایی پایین */
     margin-bottom: calc(var(--floor-gap) * .6);
   }
   .card.show{display:block; animation:pop .7s ease}
@@ -343,6 +341,11 @@
   .btn:active{ transform: translateY(1px); }
   .btn.primary{ background: var(--rose); color:#fff}
 
+  /* حالت مشغولِ دکمه‌ها */
+  .btn.is-busy, .btn[disabled], .open-btn.is-busy, .open-btn[disabled]{
+    opacity:.6; cursor:not-allowed; pointer-events:none;
+  }
+
   .vol-wrap{ display:flex; align-items:center; gap:8px; }
   .vol-label{ font-size:12px; opacity:.75 }
   input[type="range"]{
@@ -375,7 +378,7 @@
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
 
-  /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
+  /* PRINT */
   @media print{
     @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
 
@@ -384,7 +387,6 @@
       -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
     }
 
-    /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
     .stage > :not(.card){ display:none !important; }
@@ -571,14 +573,64 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const quotesSection = document.getElementById("quotes");
   const qProgress = document.getElementById("qProgress");
 
+  /* ========= کمک‌تابع‌ها: قفل، بیزی، singleflight، دی‌بونس ========= */
+  let isOpening = false;
+  let isTyping = false;
+  let isAudioStarting = false;
+
+  function setBusy(el, busy, busyText){
+    if(!el) return;
+    if(busy){
+      if(!el.dataset.prevText){ el.dataset.prevText = el.textContent || ""; }
+      if(busyText){ el.textContent = busyText; }
+      el.classList.add('is-busy');
+      el.setAttribute('aria-disabled','true');
+      try{ el.disabled = true; }catch{}
+    }else{
+      el.classList.remove('is-busy');
+      el.removeAttribute('aria-disabled');
+      try{ el.disabled = false; }catch{}
+      if(el.dataset.prevText!=null){
+        el.textContent = el.dataset.prevText;
+        delete el.dataset.prevText;
+      }
+    }
+  }
+
+  function singleflight(fn){
+    let inflight = false, p = null;
+    return (...args)=>{
+      if(inflight) return p;
+      inflight = true;
+      p = Promise.resolve(fn(...args))
+        .finally(()=>{ inflight = false; });
+      return p;
+    };
+  }
+
+  function debounce(fn, wait){
+    let t=null;
+    return (...args)=>{
+      clearTimeout(t);
+      t = setTimeout(()=>fn(...args), wait);
+    };
+  }
+
   // Typing + Neon highlight
   function typeWriter(text, el, i=0){
-    if(i === 0){ el.textContent = ""; }
+    if(i === 0){
+      if(isTyping) return;        // قفل همزمانی
+      isTyping = true;
+      setBusy(replayBtn, true, "...");
+      el.textContent = "";
+    }
     if(i < text.length){
       el.textContent = text.slice(0, i+1);
       setTimeout(()=>typeWriter(text, el, i+1), 24);
     }else{
       highlightLetter();
+      isTyping = false;
+      setBusy(replayBtn, false);
     }
   }
   function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -599,7 +651,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const prev = text[start-1], next = text[end];
       const isBoundary = !isLetterOrDigit(prev) && !isLetterOrDigit(next);
       if(isBoundary){
-        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); }
+        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); } /* <-- bug fixed */
         const span = document.createElement('span');
         span.className = 'neon-word breathe';
         span.textContent = m[0];
@@ -639,52 +691,75 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   });
 
   // Music
-  let isPlaying = false;
-  let didFirstFade = false;
   function vizOn(){ musicViz?.classList.add("on"); }
   function vizOff(){ musicViz?.classList.remove("on"); }
-  function fadeInTo(targetVol= (volumeEl?.value||70)/100, ms=1000){
-    const steps = Math.max(1, Math.floor(ms/50)); let k=0; const start=0; bgm.volume=0;
-    const it = setInterval(()=>{
-      k++; bgm.volume = start + (targetVol - start) * (k/steps);
-      if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
-    },50);
-  }
+
   async function tryPlay(){
     try{
       if (fxOpen && fxOpen.src && !fxOpen.error) {
         try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; fxOpen.play(); }catch(e){}
       }
-      await bgm.play(); isPlaying = true;
-      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(); }
-      else{ bgm.volume = (volumeEl?.value||70) / 100; }
-      musicBtn.textContent = "Melodie 🎵"; vizOn();
+      await bgm.play();
+      if(bgm.currentTime < 0.2){ // fade-in اول
+        const targetVol = (volumeEl?.value||70) / 100;
+        bgm.volume = 0;
+        let k=0, steps=16;
+        const it = setInterval(()=>{
+          k++; bgm.volume = Math.min(targetVol, (k/steps)*targetVol);
+          if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
+        },50);
+      }else{
+        bgm.volume = (volumeEl?.value||70) / 100;
+      }
+      vizOn();
+      return true;
     }catch(e){
       console.warn("Audio error:", e);
-      isPlaying = false; vizOff();
+      vizOff();
+      return false;
     }
   }
+
+  const startAudio = singleflight(async ()=>{
+    if(isAudioStarting) return;
+    isAudioStarting = true;
+    setBusy(musicBtn, true, "...");
+    const ok = await tryPlay();
+    setBusy(musicBtn, false);
+    isAudioStarting = false;
+    return ok;
+  });
+
   musicBtn?.addEventListener("click", async ()=>{
     if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
-    if(isPlaying){ bgm.pause(); isPlaying=false; musicBtn.textContent="Melodie 🎵"; vizOff(); }
-    else{ await tryPlay(); }
+    if(!bgm.paused){
+      bgm.pause(); vizOff(); return;
+    }
+    await startAudio();
   });
-  bgm?.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
-  bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+
+  bgm?.addEventListener('pause', ()=>{ vizOff(); });
+  bgm?.addEventListener('ended', ()=>{ vizOff(); });
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // Open → show card
-  openBtn.addEventListener("click", async (ev)=>{
+  // Open → show card (singleflight + lock)
+  const openOnce = singleflight(async (ev)=>{
+    if(isOpening) return;
+    isOpening = true;
+    setBusy(openBtn, true, "Öffnen…");
+
     // Ripple
-    const r = document.createElement('span');
-    r.className = 'ripple';
-    const rect = openBtn.getBoundingClientRect();
-    const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
-    const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
-    r.style.left = x + 'px'; 
-    r.style.top  = y + 'px';
-    openBtn.appendChild(r); 
-    setTimeout(()=> r.remove(), 650);
+    if(ev){
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const rect = openBtn.getBoundingClientRect();
+      const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
+      const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
+      r.style.left = x + 'px'; 
+      r.style.top  = y + 'px';
+      openBtn.appendChild(r); 
+      setTimeout(()=> r.remove(), 650);
+    }
 
     // Seal wiggle
     if (sealEl){
@@ -692,31 +767,21 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
     }
 
-    // Play in same gesture (iOS/PWA-friendly)
-    try{
-      if (fxOpen) { fxOpen.currentTime = 0; fxOpen.play().catch(()=>{}); }
-      if (bgm.paused){
-        const target = (volumeEl?.value||70) / 100;
-        bgm.volume = 0;
-        const p = bgm.play();
-        if (p && p.then) { await p; }
-        isPlaying = true; musicBtn.textContent = "Melodie 🎵"; vizOn();
-        let k = 0, steps = 16;
-        const it = setInterval(()=>{
-          k++; 
-          bgm.volume = Math.min(target, (k/steps)*target);
-          if(k>=steps){ clearInterval(it); bgm.volume = target; }
-        }, 50);
-      }
-    }catch(e){}
+    // سعی برای پخش صدا در همان ژست
+    if(bgm.paused){ await startAudio(); }
 
     // Open envelope → show card
     envEl.classList.add("opened");
     setTimeout(()=>{
       card.classList.add("show");
       typeWriter(letterText, letterEl);
+      // openBtn بعد از بازشدن عملاً مخفی می‌شود؛ ولی اگر هم بود، آزادش کن
+      setBusy(openBtn, false);
+      isOpening = false;
     }, 500);
   });
+
+  openBtn.addEventListener("click", openOnce);
 
   /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
   function mmToPx(mm){
@@ -761,16 +826,23 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   // PDF/Print
   pdfBtn?.addEventListener("click", ()=>{
+    setBusy(pdfBtn, true, "...");
     computePrintScale();
-    setTimeout(()=> window.print(), 30);
+    setTimeout(()=> {
+      window.print();
+      setBusy(pdfBtn, false);
+    }, 30);
   });
   window.addEventListener('beforeprint', computePrintScale);
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
   });
 
-  // Replay letter
-  replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
+  // Replay letter (با قفل اجرا)
+  replayBtn?.addEventListener("click", ()=>{
+    if(isTyping) return;
+    typeWriter(letterText, letterEl);
+  });
 
   // Quotes + progress + swipe
   const QUOTES = [
@@ -781,7 +853,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Wenn die Welt für einen Moment still wird, wird sie durch dein Lachen wieder hell für mich.", author:""},
     {text:"Du bist nicht einfach nur ein Mensch – du bist ein Gefühl, so besonders.", author:""},
     {text:"Je mehr Zeit vergeht, desto sicherer bin ich – Liebe bedeutet DU.", author:""},
-    {text:"Die ganze Welt auf einer Seite, dein Lächeln auf der anderen – und ich? Ich bin immer auf der Seite deines Lächelns.", author:""},
+    {text:"Die ganze Welt auf einer Seite، dein Lächeln auf der anderen – und ich? Ich bin immer auf der Seite deines Lächelns.", author:""},
     {text:"Du bist mein Für immer – auch wenn sich die Jahreszeiten ändern, bleibst du fest in meinem Herzen.", author:""},
     {text:"Du bist die Person, an die ich unbewusst denke… vor jeder Handlung, vor jeder Entscheidung, vor jedem Lächeln.", author:""},
     {text:"Dich zu lieben war keine Wahl… es war ein Ereignis. So ein Ereignis, das man nicht aufhalten kann.“", author:""},
@@ -795,24 +867,24 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Die Ferne von dir ist wie ein unvollendetes Gedicht… jede Zeile erinnert an dich.", author:""},
     {text:"Die Entfernung von dir ist das Einzige, das mich daran erinnert, wie wertvoll deine Anwesenheit für mich ist.", author:""},
     {text:"Die Entfernung von dir schmeckt bitter, aber die Erinnerung an dich macht sie süß.", author:""},
-    {text:"Selbst wenn du so weit weg bist, scheint es, als wären all deine Erinnerungen bei mir und sprechen mit mir.", author:""},
-    {text:"Ich vermisse deine Stimme, deinen Blick und sogar dein Schweigen.", author:""},
-    {text:"Entfernungen trennen nur die Körper, nicht die Herzen; mein Herz ist immer bei dir", author:""},
+    {text:"Selbst wenn du so weit weg bist، scheint es, als wären all deine Erinnerungen bei mir und sprechen mit mir.", author:""},
+    {text:"Ich vermisse deine Stimme، deinen Blick und sogar dein Schweigen.", author:""},
+    {text:"Entfernungen trennen nur die Körper، nicht die Herzen; mein Herz ist immer bei dir", author:""},
     {text:"Die Entfernung von dir bedeutet, in der Sehnsucht nach dem Moment zu leben, in dem ich dich wiedersehe.", author:""},
     {text:"Meine Liebe zu dir ist wie der Regen – unaufhörlich und endlos.", author:""},
-    {text:"Mit dir zu sein bedeutet, jeden Tag in einem Traum zu leben.", author:""},
-    {text:"Jeder Moment ohne dich – da sind es deine Erinnerungen, die mich am Leben halten.", author:""},
-    {text:"Ich vermisse dich so sehr, dass selbst die Sterne traurig wirken.", author:""},
-    {text:"Mit dir zu sein bedeutet, das Leben mit all seinen Farben und Klängen zu erleben.", author:""},
-    {text:"Du bist derjenige, der mit einer einzigen Nachricht all meine Traurigkeit verschwinden lassen kann.", author:""},
-    {text:"Manchmal denke ich, mein Herz ist mehr von dir abhängig als vom Internet – es muss immer mit dir verbunden sein.", author:""},
-    {text:"Du bist der Grund, warum ich manchmal Lust habe, nur für dich zu singen – selbst wenn meine Stimme gar nicht gut ist.", author:""},
+    {text:"Mit dir zu sein bedeutet، jeden Tag in einem Traum zu leben.", author:""},
+    {text:"Jeder Moment ohne dich – da sind es deine Erinnerungen، die mich am Leben halten.", author:""},
+    {text:"Ich vermisse dich so sehr، dass selbst die Sterne traurig wirken.", author:""},
+    {text:"Mit dir zu sein bedeutet، das Leben mit all seinen Farben und Klängen zu erleben.", author:""},
+    {text:"Du bist derjenige، der mit einer einzigen Nachricht all meine Traurigkeit verschwinden lassen kann.", author:""},
+    {text:"Manchmal denke ich، mein Herz ist mehr von dir abhängig als vom Internet – es muss immer mit dir verbunden sein.", author:""},
+    {text:"Du bist der Grund، warum ich manchmal Lust habe، nur für dich zu singen – selbst wenn meine Stimme gar nicht gut ist.", author:""},
     {text:"Du bist wie mein Morgenkaffee – warm und absolut unverzichtbar!", author:""},
-    {text:"Manchmal wünsche ich mir, du würdest mir eine kleine Schachtel voller deiner Lacher machen.", author:""},
-    {text:"Manchmal möchte ich für dich Gedichte sagen, auch wenn die Reime falsch sind.", author:""},
+    {text:"Manchmal wünsche ich mir، du würdest mir eine kleine Schachtel voller deiner Lacher machen.", author:""},
+    {text:"Manchmal möchte ich für dich Gedichte sagen، auch wenn die Reime falsch sind.", author:""},
     {text:"Mit dir ist sogar ein einziger Moment der Trennung die längste Sekunde überhaupt.", author:""},
-    {text:"Mit dir zu sein bedeutet, dass ich selbst dann, wenn ich wütend bin, dich einfach nur umarmen möchte.", author:""},
-    {text:"Manchmal möchte ich einfach nur deine Träume berühren und spüren, dass du wirklich da bist.", author:""},
+    {text:"Mit dir zu sein bedeutet، dass ich selbst dann، wenn ich wütend bin، dich einfach nur umarmen möchte.", author:""},
+    {text:"Manchmal möchte ich einfach nur deine Träume berühren und spüren، dass du wirklich da bist.", author:""},
     {text:"Roya, du bist wie eine Brise, die meine Seele selbst dann sanft berührt, wenn du nicht da bist.", author:""},
     {text:"Manchmal wünsche ich mir, dich einfach festzuhalten und die Zeit anzuhalten.", author:""},
     {text:"Mit dir schenkt mir sogar ein kurzer Blick tausend verliebte Gefühle.", author:""},
@@ -820,7 +892,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Mit dir zusammen zu sein bedeutet, dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
     {text:"Du bist wie ein romantischer Film, von dem man nie müde wird, ihn wieder und wieder anzuschauen.", author:""},
     {text:"Du bist illegal hübsch; ich glaub, du solltest bestraft werden.", author:""},
-    {text:"Du bist genau derjenige, der mein Gehirن durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
+    {text:"Du bist genau derjenige, der mein Gehirn durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
     {text:"„Wenn ich nur eine Minute von dir weg bin, fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
     {text:"Du bist wie mein Morgenkaffee – selbst wenn du bitter wärst, ohne dich könnte mein Tag gar nicht beginnen.", author:""},
     {text:"Du bist diejenige, wegen der ich den halben Tag nachdenke und die andere Hälfte lache.", author:""},
@@ -888,9 +960,11 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     quoteText.classList.remove("heartbeat");
     stopProgress();
   }
-  prevBtn?.addEventListener("click", ()=>{ prev(); stopAuto(); });
-  nextBtn?.addEventListener("click", ()=>{ next(); stopAuto(); });
-  randBtn?.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
+
+  // دکمه‌های نقل‌قول: دی‌بونس سبک برای جلوگیری از اسپم
+  prevBtn?.addEventListener("click", debounce(()=>{ prev(); stopAuto(); }, 120));
+  nextBtn?.addEventListener("click", debounce(()=>{ next(); stopAuto(); }, 120));
+  randBtn?.addEventListener("click", debounce(()=>{ randomQuote(); stopAuto(); }, 120));
   autoBtn?.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
 
   // Swipe (mobile)
