@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>💌Mein Lieblingsschmerz💌</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -20,20 +21,30 @@
     --halo2h: clamp(320px, 50vh, 760px);
     --champW: clamp(360px, 50vw, 820px);
     --champH: clamp(260px, 38vh, 560px);
+
+    /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
     --floor-gap: clamp(72px, 10vh, 180px);
+
+    /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
     --print-zoom: 1;
+
+    /* فاصلهٔ امن انتهای متن برای اسکرول کامل در موبایل */
+    --scroll-pad: clamp(72px, 14vh, 220px);
   }
 
-  html,body{height:100%;margin:0}
+  html, body { height: 100%; margin: 0; overflow-x: hidden; }
+
   body{
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Tahoma,sans-serif;
     color:var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    padding:28px;
+
+    /* فقط بالا/پایین safe-area؛ چپ/راست ثابت تا تقارن حفظ شود */
     padding-top:    max(28px, env(safe-area-inset-top));
-    padding-right:  max(28px, env(safe-area-inset-right));
+    padding-right:  28px;
     padding-bottom: calc(max(28px, env(safe-area-inset-bottom)) + var(--floor-gap));
-    padding-left:   max(28px, env(safe-area-inset-left));
+    padding-left:   28px;
+
+    /* پس‌زمینه */
     background:
       radial-gradient(var(--halo1w) var(--halo1h) at 78% 6%,  rgba(255,241,247,.95), transparent 65%),
       radial-gradient(var(--halo2w) var(--halo2h) at 8% 94%,   rgba(255,227,236,.88), transparent 66%),
@@ -42,19 +53,20 @@
       radial-gradient(calc(var(--champW)*1.1) calc(var(--champH)*0.9) at 50% -8%,  rgba(247,213,143,.12), transparent 65%),
       #fffaf6;
     background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
-    position:relative; overflow-x:hidden;
+    position:relative;
   }
 
-  /* حالت خواندن: وسط‌چینی عمودی را برمی‌داریم تا اسکرول طبیعی شود */
-  body.reading{
-    display:block;
-    padding-top: max(16px, env(safe-area-inset-top));
+  /* مرکزدهی پایدار: به‌جای فلکس روی body، با margin:auto روی stage */
+  .stage{
+    position:relative;
+    width: min(760px, 100%);
+    margin-inline: auto;
+    min-height: 100svh; /* ارتفاع پایدار موبایل */
+    overflow-x: hidden;
   }
-
-  .stage{position:relative; width:min(760px,96vw); margin:0 auto;}
 
   /* Umschlag */
-  .envelope{ position:relative; height:360px; perspective:1200px; display:flex;align-items:center;justify-content:center; transition:height .5s ease; }
+  .envelope{ position:relative; height:360px; perspective:1200px; display:flex;align-items:center;justify-content:center; }
   .env-body{
     position:absolute; inset:0; border-radius:22px; overflow:hidden;
     background:linear-gradient(#fff, #fff5f7);
@@ -150,12 +162,6 @@
   .opened .flap{ transform: rotateX(-185deg); }
   .opened .open-wrap{display:none}
 
-  /* بعد از بازشدن: پاکت کوچک شود و لایه‌های رویی رو‌ش اسکرول نگیرد */
-  .envelope.opened{ height:160px; }
-  .envelope.opened .env-body,
-  .envelope.opened .flap,
-  .envelope.opened .seal{ pointer-events:none; }
-
   /* Origami short line */
   .origami-line{
     position:absolute; top:64px; right:26px; width:120px; height:22px; pointer-events:none; opacity:.8;
@@ -173,6 +179,8 @@
   .card{
     position:relative; margin-top:36px; background:var(--paper); border-radius:22px;
     border:1px solid #ffe5d4; overflow:hidden; display:none; box-shadow:var(--shadow);
+
+    /* برای دیده‌شدن کامل قاب طلایی پایین */
     margin-bottom: calc(var(--floor-gap) * .6);
   }
   .card.show{display:block; animation:pop .7s ease}
@@ -197,6 +205,7 @@
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
+    overflow: visible;
   }
   .chip{display:inline-block; color:#9c1c38; font-weight:800; font-size:12px}
   .chip.ribbon{
@@ -214,7 +223,12 @@
   .chip.ribbon::before{ left:-10px; }
   .chip.ribbon::after{  right:-10px; }
 
-  .card-body{ padding:24px; line-height:1.95; position:relative }
+  .card-body{
+    padding:24px;
+    line-height:1.95; position:relative;
+    /* فاصلهٔ امن اضافی در انتها برای اسکرول کامل روی موبایل */
+    padding-bottom: calc(24px + var(--scroll-pad));
+  }
   .card-body::after{
     content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
@@ -328,7 +342,6 @@
   .btn:hover{ box-shadow:0 10px 22px rgba(255,75,110,.28), 0 0 0 1px rgba(255,255,255,.6) inset; }
   .btn:active{ transform: translateY(1px); }
   .btn.primary{ background: var(--rose); color:#fff}
-  .btn[disabled]{ opacity:.55; pointer-events:none; }
 
   .vol-wrap{ display:flex; align-items:center; gap:8px; }
   .vol-label{ font-size:12px; opacity:.75 }
@@ -362,7 +375,7 @@
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
 
-  /* PRINT */
+  /* PRINT: یک صفحه A4 با زوم واقعی که روی چیدمان اثر می‌گذارد */
   @media print{
     @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
 
@@ -371,6 +384,7 @@
       -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
     }
 
+    /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
     .stage > :not(.card){ display:none !important; }
@@ -531,55 +545,40 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const NEON_WORDS = ["Roya","to","donyam"];
 
   // Elements
-  const envEl   = document.getElementById("envelope");
+  const envEl = document.getElementById("envelope");
   const openBtn = document.getElementById("openBtn");
-  const card    = document.getElementById("card");
-  const letterEl= document.getElementById("letter");
-  const nameEl  = document.getElementById("name");
-  const musicBtn= document.getElementById("musicBtn");
-  const volumeEl= document.getElementById("volume");
-  const bgm     = document.getElementById("bgm");
-  const fxOpen  = document.getElementById("fxOpen");
-  const musicViz= document.getElementById("musicViz");
-  const psToggle= document.getElementById("psToggle");
-  const psText  = document.getElementById("psText");
-  const sealEl  = document.getElementById("seal");
+  const card = document.getElementById("card");
+  const letterEl = document.getElementById("letter");
+  const nameEl = document.getElementById("name");
+  const musicBtn = document.getElementById("musicBtn");
+  const volumeEl = document.getElementById("volume");
+  const bgm = document.getElementById("bgm");
+  const fxOpen = document.getElementById("fxOpen");
+  const musicViz = document.getElementById("musicViz");
+  const psToggle = document.getElementById("psToggle");
+  const psText = document.getElementById("psText");
+  const sealEl = document.getElementById("seal");
 
-  const quoteText   = document.getElementById("quoteText");
+  const quoteText = document.getElementById("quoteText");
   const quoteAuthor = document.getElementById("quoteAuthor");
-  const dotsWrap    = document.getElementById("dots");
-  const prevBtn     = document.getElementById("prevBtn");
-  const nextBtn     = document.getElementById("nextBtn");
-  const randBtn     = document.getElementById("randBtn");
-  const autoBtn     = document.getElementById("autoBtn");
-  const replayBtn   = document.getElementById("replay");
-  const pdfBtn      = document.getElementById("pdf");
+  const dotsWrap = document.getElementById("dots");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const randBtn = document.getElementById("randBtn");
+  const autoBtn = document.getElementById("autoBtn");
+  const replayBtn = document.getElementById("replay");
+  const pdfBtn = document.getElementById("pdf");
   const quotesSection = document.getElementById("quotes");
-  const qProgress   = document.getElementById("qProgress");
-
-  // === UI Busy helper (برای جلوگیری از دوبار کلیک) ===
-  const lockables = [];
-  [replayBtn, prevBtn, nextBtn, randBtn, autoBtn, pdfBtn].forEach(b=> b && lockables.push(b));
-  function setButtonsDisabled(disabled){
-    lockables.forEach(b=>{ b.disabled = !!disabled; });
-  }
+  const qProgress = document.getElementById("qProgress");
 
   // Typing + Neon highlight
-  let isTyping = false;
-  function typeWriter(text, el, i=0, onDone){
-    if(i === 0){
-      isTyping = true;
-      setButtonsDisabled(true);
-      el.textContent = "";
-    }
+  function typeWriter(text, el, i=0){
+    if(i === 0){ el.textContent = ""; }
     if(i < text.length){
       el.textContent = text.slice(0, i+1);
-      setTimeout(()=>typeWriter(text, el, i+1, onDone), 24);
+      setTimeout(()=>typeWriter(text, el, i+1), 24);
     }else{
-      isTyping = false;
-      setButtonsDisabled(false);
       highlightLetter();
-      if(typeof onDone === 'function') onDone();
     }
   }
   function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -589,6 +588,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     return new RegExp(`(${pattern})`,'giu');
   }
   function isLetterOrDigit(ch){ return ch && /\p{L}|\p{N}/u.test(ch); }
+
   function highlightNodeText(node, re){
     const text = node.nodeValue;
     if(!text || !re.test(text)) return;
@@ -673,16 +673,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // اسکرول کنترل‌شده به ابتدای کارت (با درنظرگرفتن بالاپَدیگ)
-  function scrollCardIntoView(){
-    const rect = card.getBoundingClientRect();
-    const bodyStyles = getComputedStyle(document.body);
-    const padTop = parseFloat(bodyStyles.paddingTop) || 0;
-    const targetTop = rect.top + window.pageYOffset - Math.max(12, padTop*0.5);
-    window.scrollTo({ top: targetTop, behavior: 'smooth' });
-  }
-
-  // Open → show card + حالت خواندن + پخش صدا در همان ژست
+  // Open → show card
   openBtn.addEventListener("click", async (ev)=>{
     // Ripple
     const r = document.createElement('span');
@@ -690,37 +681,40 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     const rect = openBtn.getBoundingClientRect();
     const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
     const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
-    r.style.left = x + 'px'; r.style.top = y + 'px';
-    openBtn.appendChild(r); setTimeout(()=> r.remove(), 650);
+    r.style.left = x + 'px'; 
+    r.style.top  = y + 'px';
+    openBtn.appendChild(r); 
+    setTimeout(()=> r.remove(), 650);
 
-    // مهر
-    if (sealEl){ sealEl.classList.add('wiggle'); setTimeout(()=> sealEl.classList.remove('wiggle'), 360); }
+    // Seal wiggle
+    if (sealEl){
+      sealEl.classList.add('wiggle');
+      setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
+    }
 
-    // پخش‌ها در همان ژست
+    // Play in same gesture (iOS/PWA-friendly)
     try{
       if (fxOpen) { fxOpen.currentTime = 0; fxOpen.play().catch(()=>{}); }
-      if (bgm && bgm.paused){
-        const target = (volumeEl?.value||70)/100;
+      if (bgm.paused){
+        const target = (volumeEl?.value||70) / 100;
         bgm.volume = 0;
         const p = bgm.play();
-        if (p && p.then){ await p; }
+        if (p && p.then) { await p; }
         isPlaying = true; musicBtn.textContent = "Melodie 🎵"; vizOn();
-        // فیداین
-        let k=0, steps=16; const it=setInterval(()=>{ k++; bgm.volume=Math.min(target,(k/steps)*target); if(k>=steps){clearInterval(it); bgm.volume=target;} },50);
+        let k = 0, steps = 16;
+        const it = setInterval(()=>{
+          k++; 
+          bgm.volume = Math.min(target, (k/steps)*target);
+          if(k>=steps){ clearInterval(it); bgm.volume = target; }
+        }, 50);
       }
-    }catch(e){ /* سکوت */ }
+    }catch(e){}
 
-    // باز شدن پاکت + ورود به حالت خواندن
+    // Open envelope → show card
     envEl.classList.add("opened");
-    document.body.classList.add('reading');
-
-    // نشان‌دادن کارت و اسکرول
     setTimeout(()=>{
       card.classList.add("show");
-      // ابتدا تایپ را شروع می‌کنیم و دکمه‌ها را قفل می‌کنیم
-      typeWriter(letterText, letterEl, 0, ()=>{ /* unlocked inside */ });
-      // بعد از اعمال کلاس‌ها، اسکرول را اجرا کن
-      requestAnimationFrame(()=> { requestAnimationFrame(scrollCardIntoView); });
+      typeWriter(letterText, letterEl);
     }, 500);
   });
 
@@ -735,21 +729,29 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     el.remove();
     return px;
   }
+
   function computePrintScale(){
     try{
       const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
       const PAGE_W=210, PAGE_H=297;              // A4 mm
+
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
+
       const prevDisplay = getComputedStyle(card).display;
       const prevWidth = card.style.width;
+
       card.style.display = 'block';
       card.style.width = printableWpx + 'px';
+
       const contentH = card.scrollHeight;
+
       const zoom = Math.min(1, printableHpx / contentH);
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
+
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
+
       return zoom;
     }catch(e){
       document.documentElement.style.setProperty('--print-zoom','1');
@@ -763,13 +765,12 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     setTimeout(()=> window.print(), 30);
   });
   window.addEventListener('beforeprint', computePrintScale);
-  window.addEventListener('afterprint', ()=>{ document.documentElement.style.removeProperty('--print-zoom'); });
-
-  // Replay letter (جلوگیری از دوباره‌کاری هنگام تایپ)
-  replayBtn?.addEventListener("click", ()=>{
-    if (isTyping) return;
-    typeWriter(letterText, letterEl, 0, ()=>{});
+  window.addEventListener('afterprint', ()=>{
+    document.documentElement.style.removeProperty('--print-zoom');
   });
+
+  // Replay letter
+  replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
 
   // Quotes + progress + swipe
   const QUOTES = [
@@ -819,13 +820,13 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Mit dir zusammen zu sein bedeutet, dass sogar Eifersucht süß ist – weil sie ein Zeichen von Zuneigung ist.", author:""},
     {text:"Du bist wie ein romantischer Film, von dem man nie müde wird, ihn wieder und wieder anzuschauen.", author:""},
     {text:"Du bist illegal hübsch; ich glaub, du solltest bestraft werden.", author:""},
-    {text:"Du bist genau derjenige, der mein Gehirn durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
+    {text:"Du bist genau derjenige, der mein Gehirن durcheinander bringt und mein Herz schneller schlagen lässt.", author:""},
     {text:"„Wenn ich nur eine Minute von dir weg bin, fühlt es sich an, als hätte die ganze Welt kein Internet mehr.“", author:""},
     {text:"Du bist wie mein Morgenkaffee – selbst wenn du bitter wärst, ohne dich könnte mein Tag gar nicht beginnen.", author:""},
     {text:"Du bist diejenige, wegen der ich den halben Tag nachdenke und die andere Hälfte lache.", author:""},
-    {text:"Wenn ich könnte, würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
-    {text:"Roya, du bist wie starkes WLAN – wenn du nicht da bist, fühlt sich die ganze Welt langsam und langweilig an.", author:""},
-    {text:"„Jedes Mal, wenn du mir schreibst, fühlt es sich an, als würde eine Kugel voller Glück mich treffen.“", author:""},
+    {text:"Wenn ich könnte، würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
+    {text:"Roya, du bist wie starkes WLAN – wenn du nicht da bist، fühlt sich die ganze Welt langsam und langweilig an.", author:""},
+    {text:"„Jedes Mal, wenn du mir schreibst، fühlt es sich an، als würde eine Kugel voller Glück mich treffen.“", author:""},
     {text:"Ich liebe dich – nicht wie die anderen, sondern wie den ersten Herzschlag, der merkt, dass er lebt, nur weil es dich gibt.", author:""}
   ];
   let idx = 0, autoTimer = null;
@@ -833,7 +834,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   function renderDots(){
     dotsWrap.innerHTML = "";
-    QUOTES.forEach((_, i)=>{
+    QUOTES.forEach((q, i)=>{
       const d = document.createElement("button");
       d.className = "dot";
       d.setAttribute("aria-label", `Zitat ${i+1} von ${QUOTES.length}`);
@@ -887,10 +888,10 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     quoteText.classList.remove("heartbeat");
     stopProgress();
   }
-  prevBtn?.addEventListener("click", ()=>{ if(!isTyping){ prev(); stopAuto(); } });
-  nextBtn?.addEventListener("click", ()=>{ if(!isTyping){ next(); stopAuto(); } });
-  randBtn?.addEventListener("click", ()=>{ if(!isTyping){ randomQuote(); stopAuto(); } });
-  autoBtn?.addEventListener("click", ()=>{ if(isTyping) return; autoTimer ? stopAuto() : startAuto(); });
+  prevBtn?.addEventListener("click", ()=>{ prev(); stopAuto(); });
+  nextBtn?.addEventListener("click", ()=>{ next(); stopAuto(); });
+  randBtn?.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
+  autoBtn?.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
 
   // Swipe (mobile)
   let touchStartX=null, touchStartY=null, touchEndX=null, touchEndY=null;
