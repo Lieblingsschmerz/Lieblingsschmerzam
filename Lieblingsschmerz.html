@@ -25,7 +25,7 @@
     /* فاصلهٔ مطمئن از کف صفحه (برای دیده‌شدن کامل قاب طلایی) */
     --floor-gap: clamp(72px, 10vh, 180px);
 
-    /* برای پرینت: ضریب زوم خودکار (در زمان چاپ محاسبه می‌شود) */
+    /* ضریب زومِ چاپ (با JS تنظیم می‌شود) */
     --print-zoom: 1;
 
     /* فاصلهٔ امن انتهای متن برای اسکرول کامل در موبایل */
@@ -52,16 +52,16 @@
       radial-gradient(calc(var(--champW)*0.8) calc(var(--champH)*0.8) at -6% 104%, rgba(245,198,106,.18), transparent 62%),
       radial-gradient(calc(var(--champW)*1.1) calc(var(--champH)*0.9) at 50% -8%,  rgba(247,213,143,.12), transparent 65%),
       #fffaf6;
-    background-attachment: fixed, fixed, fixed, fixed، fixed, fixed;
+    background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
     position:relative;
   }
 
-  /* مرکزدهی پایدار: به‌جای فلکس روی body، با margin:auto روی stage */
+  /* مرکزدهی پایدار */
   .stage{
     position:relative;
     width: min(760px, 100%);
     margin-inline: auto;
-    min-height: 100svh; /* ارتفاع پایدار موبایل */
+    min-height: 100svh;
     overflow-x: hidden;
   }
 
@@ -199,7 +199,6 @@
     opacity:.45;
   }
 
-  /* Header + symmetric ribbon chip */
   .card-header{
     padding:16px 20px; background:linear-gradient(90deg,#fff7f3,#fff1f7);
     display:flex; align-items:center; gap:8px; border-bottom:1px solid #ffe3ea;
@@ -232,15 +231,9 @@
     box-shadow: inset 0 0 80px rgba(255, 206, 216, .20);
   }
 
-  /* Subtle golden corner florals */
-  .gilded-corner{
-    position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px);
-  }
+  .gilded-corner{ position:absolute; width:100px; height:100px; pointer-events:none; opacity:.18; filter: blur(.2px); }
   .gilded-corner svg path,
-  .gilded-corner svg circle{
-    stroke: rgba(247,213,143,.8);
-    fill: rgba(247,213,143,.18);
-  }
+  .gilded-corner svg circle{ stroke: rgba(247,213,143,.8); fill: rgba(247,213,143,.18); }
   .gilded-corner.tl{ top:10px; left:10px; transform: rotate(0deg); }
   .gilded-corner.br{ bottom:10px; right:10px; transform: rotate(180deg); }
 
@@ -281,10 +274,8 @@
   .fade{animation:fade .35s ease}
   @keyframes fade{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:translateY(0)}}
 
-  /* Divider */
   .divider{
-    --gap: 14px;
-    --thick: 1.5px;
+    --gap: 14px; --thick: 1.5px;
     position:relative; height:22px; margin:14px 0;
   }
   .divider::before{
@@ -302,7 +293,6 @@
     box-shadow: 0 0 16px rgba(247,213,143,.25);
   }
 
-  /* Quotes */
   .quotes{ margin-top:18px; padding-top:10px; border-top:none; }
   .q-title{font-weight:800; margin:0 0 8px}
   .q-box{
@@ -319,32 +309,21 @@
 
   .q-actions{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px}
 
-  /* progress */
   .q-progress{ height:2px; background:rgba(249,230,182,.35); border-radius:999px; overflow:hidden; margin:6px 12px 0; }
   .q-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold2)); }
   .q-progress.run .bar{ animation: qbar var(--qdur, 6s) linear forwards; }
   @keyframes qbar{ from{width:0%} to{width:100%} }
 
-  .pulse-heart{
-    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.6);
-    font-size:22px; pointer-events:none; animation:pulseOut .4s ease forwards;
-  }
+  .pulse-heart{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.6);
+    font-size:22px; pointer-events:none; animation:pulseOut .4s ease forwards; }
   @keyframes pulseOut{ to{ transform:translate(-50%,-50%) scale(1.6); opacity:0 } }
 
-  .actions{
-    display:flex; gap:10px; align-items:center; justify-content:center;
-    flex-wrap:wrap; margin:12px 0 6px;
-  }
+  .actions{ display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin:12px 0 6px; }
   .btn{ border:0; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:800; background:#f6f6f6;
         transition: box-shadow .15s ease, transform .08s ease; }
   .btn:hover{ box-shadow:0 10px 22px rgba(255,75,110,.28), 0 0 0 1px rgba(255,255,255,.6) inset; }
   .btn:active{ transform: translateY(1px); }
   .btn.primary{ background: var(--rose); color:#fff}
-
-  /* حالت مشغولِ دکمه‌ها */
-  .btn.is-busy, .btn[disabled], .open-btn.is-busy, .open-btn[disabled]{
-    opacity:.6; cursor:not-allowed; pointer-events:none;
-  }
 
   .vol-wrap{ display:flex; align-items:center; gap:8px; }
   .vol-label{ font-size:12px; opacity:.75 }
@@ -363,10 +342,8 @@
     box-shadow:0 2px 6px rgba(255,75,110,.35);
   }
 
-  .music-visual{
-    width:100%; display:flex; align-items:center; justify-content:center;
-    gap:8px; margin-top:6px; opacity:.9; flex-wrap:wrap;
-  }
+  .music-visual{ width:100%; display:flex; align-items:center; justify-content:center;
+    gap:8px; margin-top:6px; opacity:.9; flex-wrap:wrap; }
   .music-visual .heart{ font-size:18px; width:22px; text-align:center; transform-origin:center; opacity:.75; }
   .music-visual.on .heart{ animation:mbeat 1.1s ease-in-out infinite; }
   .music-visual.on .heart:nth-child(3n+1){ animation-delay:0s }
@@ -378,7 +355,7 @@
   .ps{ margin-top:8px; font-style:italic; opacity:.88; display:none; }
   .ps.show{ display:block; }
 
-  /* PRINT */
+  /* ---- PRINT: Fit-to-one-A4-page ---- */
   @media print{
     @page{ size:A4; margin:16mm 14mm 18mm 18mm; }
 
@@ -387,20 +364,35 @@
       -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0 !important; padding:0 !important;
     }
 
+    /* فقط کارت در چیدمان بماند */
     body > *{ visibility:hidden !important; }
     .stage{ display:block !important; visibility:visible !important; }
-    .stage > :not(.card){ display:none !important; }
+    .stage > :not(.card){ display:none !important; } /* پاک‌کردن envelope و ... */
     .card, .card *{ visibility:visible !important; }
 
     .card{
       display:block !important; position:static !important;
+
+      /* عرضِ هدف = پهنای قابل‌چاپ تقسیم بر ضریب */
       width: calc((210mm - 18mm - 14mm) / var(--print-zoom, 1)) !important;
+
       margin:0 !important;
       box-shadow:none !important; border:1px solid #eeeeee !important;
       break-inside: avoid !important; page-break-inside: avoid !important;
+
+      /* مرورگرهای مبتنی بر Chromium */
       zoom: var(--print-zoom, 1) !important;
-      transform: none !important;
+      transform: none !important; /* پیش‌فرض */
       transform-origin: top left !important;
+    }
+
+    /* فالبک برای Safari/iOS که zoom ندارد */
+    @supports not (zoom: 1){
+      .card{
+        zoom: 1 !important;
+        transform: scale(var(--print-zoom, 1)) !important;
+        transform-origin: top left !important;
+      }
     }
 
     .card::before, .card::after,
@@ -440,7 +432,7 @@
         </svg>
       </div>
 
-      <div class="env-label">Öffne diesen<b id="toName"> Brief </b> Immer dann, wenn du lächelst weil er gehört zu deinem Lächeln. 🩵</div>
+      <div class="env-label">Öffne diesen<b id="toName"> Brief </b> Immer dann، wenn du lächelst weil er gehört zu deinem Lächeln. 🩵</div>
       <div class="open-wrap">
         <button class="open-btn" id="openBtn" aria-label="Öffnen">Öffnen✨</button>
       </div>
@@ -573,64 +565,14 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   const quotesSection = document.getElementById("quotes");
   const qProgress = document.getElementById("qProgress");
 
-  /* ========= کمک‌تابع‌ها: قفل، بیزی، singleflight، دی‌بونس ========= */
-  let isOpening = false;
-  let isTyping = false;
-  let isAudioStarting = false;
-
-  function setBusy(el, busy, busyText){
-    if(!el) return;
-    if(busy){
-      if(!el.dataset.prevText){ el.dataset.prevText = el.textContent || ""; }
-      if(busyText){ el.textContent = busyText; }
-      el.classList.add('is-busy');
-      el.setAttribute('aria-disabled','true');
-      try{ el.disabled = true; }catch{}
-    }else{
-      el.classList.remove('is-busy');
-      el.removeAttribute('aria-disabled');
-      try{ el.disabled = false; }catch{}
-      if(el.dataset.prevText!=null){
-        el.textContent = el.dataset.prevText;
-        delete el.dataset.prevText;
-      }
-    }
-  }
-
-  function singleflight(fn){
-    let inflight = false, p = null;
-    return (...args)=>{
-      if(inflight) return p;
-      inflight = true;
-      p = Promise.resolve(fn(...args))
-        .finally(()=>{ inflight = false; });
-      return p;
-    };
-  }
-
-  function debounce(fn, wait){
-    let t=null;
-    return (...args)=>{
-      clearTimeout(t);
-      t = setTimeout(()=>fn(...args), wait);
-    };
-  }
-
   // Typing + Neon highlight
   function typeWriter(text, el, i=0){
-    if(i === 0){
-      if(isTyping) return;        // قفل همزمانی
-      isTyping = true;
-      setBusy(replayBtn, true, "...");
-      el.textContent = "";
-    }
+    if(i === 0){ el.textContent = ""; }
     if(i < text.length){
       el.textContent = text.slice(0, i+1);
       setTimeout(()=>typeWriter(text, el, i+1), 24);
     }else{
       highlightLetter();
-      isTyping = false;
-      setBusy(replayBtn, false);
     }
   }
   function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -651,7 +593,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       const prev = text[start-1], next = text[end];
       const isBoundary = !isLetterOrDigit(prev) && !isLetterOrDigit(next);
       if(isBoundary){
-        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); } /* <-- bug fixed */
+        if(start > p){ frag.appendChild(document.createTextNode(text.slice(p, start))); } // ← fixed )
         const span = document.createElement('span');
         span.className = 'neon-word breathe';
         span.textContent = m[0];
@@ -691,75 +633,52 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
   });
 
   // Music
+  let isPlaying = false;
+  let didFirstFade = false;
   function vizOn(){ musicViz?.classList.add("on"); }
   function vizOff(){ musicViz?.classList.remove("on"); }
-
+  function fadeInTo(targetVol= (volumeEl?.value||70)/100, ms=1000){
+    const steps = Math.max(1, Math.floor(ms/50)); let k=0; const start=0; bgm.volume=0;
+    const it = setInterval(()=>{
+      k++; bgm.volume = start + (targetVol - start) * (k/steps);
+      if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
+    },50);
+  }
   async function tryPlay(){
     try{
       if (fxOpen && fxOpen.src && !fxOpen.error) {
         try{ fxOpen.currentTime=0; fxOpen.playbackRate=1.1; fxOpen.volume=.3; fxOpen.play(); }catch(e){}
       }
-      await bgm.play();
-      if(bgm.currentTime < 0.2){ // fade-in اول
-        const targetVol = (volumeEl?.value||70) / 100;
-        bgm.volume = 0;
-        let k=0, steps=16;
-        const it = setInterval(()=>{
-          k++; bgm.volume = Math.min(targetVol, (k/steps)*targetVol);
-          if(k>=steps){ clearInterval(it); bgm.volume = targetVol; }
-        },50);
-      }else{
-        bgm.volume = (volumeEl?.value||70) / 100;
-      }
-      vizOn();
-      return true;
+      await bgm.play(); isPlaying = true;
+      if(!didFirstFade && bgm.currentTime < 0.2){ didFirstFade = true; fadeInTo(); }
+      else{ bgm.volume = (volumeEl?.value||70) / 100; }
+      musicBtn.textContent = "Melodie 🎵"; vizOn();
     }catch(e){
       console.warn("Audio error:", e);
-      vizOff();
-      return false;
+      isPlaying = false; vizOff();
     }
   }
-
-  const startAudio = singleflight(async ()=>{
-    if(isAudioStarting) return;
-    isAudioStarting = true;
-    setBusy(musicBtn, true, "...");
-    const ok = await tryPlay();
-    setBusy(musicBtn, false);
-    isAudioStarting = false;
-    return ok;
-  });
-
   musicBtn?.addEventListener("click", async ()=>{
     if(!bgm.src || bgm.error){ alert("Lege die Datei „bg.mp3“ neben diese HTML-Datei, um Musik abzuspielen."); return; }
-    if(!bgm.paused){
-      bgm.pause(); vizOff(); return;
-    }
-    await startAudio();
+    if(isPlaying){ bgm.pause(); isPlaying=false; musicBtn.textContent="Melodie 🎵"; vizOff(); }
+    else{ await tryPlay(); }
   });
-
-  bgm?.addEventListener('pause', ()=>{ vizOff(); });
-  bgm?.addEventListener('ended', ()=>{ vizOff(); });
+  bgm?.addEventListener('pause', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
+  bgm?.addEventListener('ended', ()=>{ isPlaying=false; vizOff(); musicBtn.textContent="Melodie 🎵"; });
   volumeEl?.addEventListener("input", ()=>{ bgm.volume = volumeEl.value / 100; });
 
-  // Open → show card (singleflight + lock)
-  const openOnce = singleflight(async (ev)=>{
-    if(isOpening) return;
-    isOpening = true;
-    setBusy(openBtn, true, "Öffnen…");
-
+  // Open → show card
+  openBtn.addEventListener("click", async (ev)=>{
     // Ripple
-    if(ev){
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      const rect = openBtn.getBoundingClientRect();
-      const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
-      const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
-      r.style.left = x + 'px'; 
-      r.style.top  = y + 'px';
-      openBtn.appendChild(r); 
-      setTimeout(()=> r.remove(), 650);
-    }
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = openBtn.getBoundingClientRect();
+    const x = (ev.clientX || (rect.left + rect.width/2)) - rect.left;
+    const y = (ev.clientY || (rect.top  + rect.height/2)) - rect.top;
+    r.style.left = x + 'px'; 
+    r.style.top  = y + 'px';
+    openBtn.appendChild(r); 
+    setTimeout(()=> r.remove(), 650);
 
     // Seal wiggle
     if (sealEl){
@@ -767,23 +686,33 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
       setTimeout(()=> sealEl.classList.remove('wiggle'), 360);
     }
 
-    // سعی برای پخش صدا در همان ژست
-    if(bgm.paused){ await startAudio(); }
+    // Play in same gesture
+    try{
+      if (fxOpen) { fxOpen.currentTime = 0; fxOpen.play().catch(()=>{}); }
+      if (bgm.paused){
+        const target = (volumeEl?.value||70) / 100;
+        bgm.volume = 0;
+        const p = bgm.play();
+        if (p && p.then) { await p; }
+        isPlaying = true; musicBtn.textContent = "Melodie 🎵"; vizOn();
+        let k = 0, steps = 16;
+        const it = setInterval(()=>{
+          k++; 
+          bgm.volume = Math.min(target, (k/steps)*target);
+          if(k>=steps){ clearInterval(it); bgm.volume = target; }
+        }, 50);
+      }
+    }catch(e){}
 
     // Open envelope → show card
     envEl.classList.add("opened");
     setTimeout(()=>{
       card.classList.add("show");
       typeWriter(letterText, letterEl);
-      // openBtn بعد از بازشدن عملاً مخفی می‌شود؛ ولی اگر هم بود، آزادش کن
-      setBusy(openBtn, false);
-      isOpening = false;
     }, 500);
   });
 
-  openBtn.addEventListener("click", openOnce);
-
-  /* ===== پرینت یک‌صفحه‌ای با زوم خودکار ===== */
+  /* ===== چاپ تک‌صفحه‌ای با زوم خودکار ===== */
   function mmToPx(mm){
     const el=document.createElement('div');
     el.style.height=mm+'mm';
@@ -797,12 +726,14 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   function computePrintScale(){
     try{
+      // باید با @page برابر باشد:
       const TOP=16, RIGHT=14, BOTTOM=18, LEFT=18; // mm
       const PAGE_W=210, PAGE_H=297;              // A4 mm
 
       const printableWpx = mmToPx(PAGE_W - LEFT - RIGHT);
       const printableHpx = mmToPx(PAGE_H - TOP - BOTTOM);
 
+      // برای اندازه‌گیری، موقتاً کارت را نشان بده
       const prevDisplay = getComputedStyle(card).display;
       const prevWidth = card.style.width;
 
@@ -811,9 +742,11 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
       const contentH = card.scrollHeight;
 
+      // ضریب: هرگز >1 بزرگ نکن
       const zoom = Math.min(1, printableHpx / contentH);
       document.documentElement.style.setProperty('--print-zoom', zoom.toFixed(3));
 
+      // بازگردانی
       card.style.width = prevWidth;
       card.style.display = prevDisplay;
 
@@ -826,34 +759,27 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
 
   // PDF/Print
   pdfBtn?.addEventListener("click", ()=>{
-    setBusy(pdfBtn, true, "...");
     computePrintScale();
-    setTimeout(()=> {
-      window.print();
-      setBusy(pdfBtn, false);
-    }, 30);
+    setTimeout(()=> window.print(), 30);
   });
   window.addEventListener('beforeprint', computePrintScale);
   window.addEventListener('afterprint', ()=>{
     document.documentElement.style.removeProperty('--print-zoom');
   });
 
-  // Replay letter (با قفل اجرا)
-  replayBtn?.addEventListener("click", ()=>{
-    if(isTyping) return;
-    typeWriter(letterText, letterEl);
-  });
+  // Replay letter
+  replayBtn?.addEventListener("click", ()=>{ typeWriter(letterText, letterEl); });
 
   // Quotes + progress + swipe
   const QUOTES = [
     {text:"Du bist das Kapitel, das ich niemals beenden möchte.", author:""},
-    {text:"Jeden Morgen, wenn ich aufwache, bist du mein erster Gedanke.", author:""},
+    {text:"Jeden Morgen, وقتی ich aufwache, bist du mein erster Gedanke.", author:""},
     {text:"Das Wort LIEBE bedeutet für mich nur deinen Namen.", author:""},
     {text:"Mein Herz findet bei niemandem Ruhe – nur der Gedanke an dich ist wie ein Wiegenlied für meine Seele.", author:""},
     {text:"Wenn die Welt für einen Moment still wird, wird sie durch dein Lachen wieder hell für mich.", author:""},
     {text:"Du bist nicht einfach nur ein Mensch – du bist ein Gefühl, so besonders.", author:""},
-    {text:"Je mehr Zeit vergeht, desto sicherer bin ich – Liebe bedeutet DU.", author:""},
-    {text:"Die ganze Welt auf einer Seite، dein Lächeln auf der anderen – und ich? Ich bin immer auf der Seite deines Lächelns.", author:""},
+    {text:"Je mehr Zeit vergeht، desto sicherer bin ich – Liebe bedeutet DU.", author:""},
+    {text:"Die ganze Welt auf einer Seite, dein Lächeln auf der anderen – und ich? Ich bin immer auf der Seite deines Lächelns.", author:""},
     {text:"Du bist mein Für immer – auch wenn sich die Jahreszeiten ändern, bleibst du fest in meinem Herzen.", author:""},
     {text:"Du bist die Person, an die ich unbewusst denke… vor jeder Handlung, vor jeder Entscheidung, vor jedem Lächeln.", author:""},
     {text:"Dich zu lieben war keine Wahl… es war ein Ereignis. So ein Ereignis, das man nicht aufhalten kann.“", author:""},
@@ -865,12 +791,12 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"In jedem Moment, in dem ich von dir entfernt bin, ist mein Herz voller Worte, die nur für dich bestimmt sind.", author:""},
     {text:"Ich habe deine Hand nie berührt, aber das Gefühl deiner Nähe in meinem Herzen hält mich am Leben.", author:""},
     {text:"Die Ferne von dir ist wie ein unvollendetes Gedicht… jede Zeile erinnert an dich.", author:""},
-    {text:"Die Entfernung von dir ist das Einzige, das mich daran erinnert, wie wertvoll deine Anwesenheit für mich ist.", author:""},
+    {text:"Die Entfernung von dir ist das Einzige, das mich daran erinnert، wie wertvoll deine Anwesenheit für mich ist.", author:""},
     {text:"Die Entfernung von dir schmeckt bitter, aber die Erinnerung an dich macht sie süß.", author:""},
     {text:"Selbst wenn du so weit weg bist، scheint es, als wären all deine Erinnerungen bei mir und sprechen mit mir.", author:""},
     {text:"Ich vermisse deine Stimme، deinen Blick und sogar dein Schweigen.", author:""},
     {text:"Entfernungen trennen nur die Körper، nicht die Herzen; mein Herz ist immer bei dir", author:""},
-    {text:"Die Entfernung von dir bedeutet, in der Sehnsucht nach dem Moment zu leben, in dem ich dich wiedersehe.", author:""},
+    {text:"Die Entfernung von dir bedeutet, in der Sehnsucht nach dem Moment zu leben، in dem ich dich wiedersehe.", author:""},
     {text:"Meine Liebe zu dir ist wie der Regen – unaufhörlich und endlos.", author:""},
     {text:"Mit dir zu sein bedeutet، jeden Tag in einem Traum zu leben.", author:""},
     {text:"Jeder Moment ohne dich – da sind es deine Erinnerungen، die mich am Leben halten.", author:""},
@@ -899,7 +825,7 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     {text:"Wenn ich könnte، würde ich dein Lächeln aufnehmen und jedes Mal abspielen, wenn ich traurig bin.", author:""},
     {text:"Roya, du bist wie starkes WLAN – wenn du nicht da bist، fühlt sich die ganze Welt langsam und langweilig an.", author:""},
     {text:"„Jedes Mal, wenn du mir schreibst، fühlt es sich an، als würde eine Kugel voller Glück mich treffen.“", author:""},
-    {text:"Ich liebe dich – nicht wie die anderen, sondern wie den ersten Herzschlag, der merkt, dass er lebt, nur weil es dich gibt.", author:""}
+    {text:"Ich liebe dich – nicht wie die anderen, sondern wie den ersten Herzschlag, der merkt, dass erlebt, nur weil es dich gibt.", author:""}
   ];
   let idx = 0, autoTimer = null;
   const AUTOPLAY_INTERVAL = 6000;
@@ -960,11 +886,9 @@ Donyam az “donya” tabdil shode be to (Roya) 💫🩵.`;
     quoteText.classList.remove("heartbeat");
     stopProgress();
   }
-
-  // دکمه‌های نقل‌قول: دی‌بونس سبک برای جلوگیری از اسپم
-  prevBtn?.addEventListener("click", debounce(()=>{ prev(); stopAuto(); }, 120));
-  nextBtn?.addEventListener("click", debounce(()=>{ next(); stopAuto(); }, 120));
-  randBtn?.addEventListener("click", debounce(()=>{ randomQuote(); stopAuto(); }, 120));
+  prevBtn?.addEventListener("click", ()=>{ prev(); stopAuto(); });
+  nextBtn?.addEventListener("click", ()=>{ next(); stopAuto(); });
+  randBtn?.addEventListener("click", ()=>{ randomQuote(); stopAuto(); });
   autoBtn?.addEventListener("click", ()=>{ autoTimer ? stopAuto() : startAuto(); });
 
   // Swipe (mobile)
